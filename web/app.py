@@ -150,8 +150,11 @@ def converter():
         if modalidade_padrao:
             defaults['modalidade'] = modalidade_padrao
 
+        # Auto-truncar campos longos?
+        auto_truncar = request.form.get('auto_truncar', 'false').lower() == 'true'
+
         # Converter
-        conversor = ConversorCatalogoSiscomex()
+        conversor = ConversorCatalogoSiscomex(auto_truncar=auto_truncar)
         produtos = conversor.ler_planilha(caminho_excel, defaults=defaults)
 
         if conversor.erros:

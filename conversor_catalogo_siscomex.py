@@ -100,10 +100,11 @@ ATRIBUTOS_LABELS = {
 class ConversorCatalogoSiscomex:
     """Converte planilha Excel para JSON no padrão CATP API Siscomex."""
 
-    def __init__(self):
+    def __init__(self, auto_truncar=False):
         self.erros = []
         self.avisos = []
         self.produtos = []
+        self.auto_truncar = auto_truncar  # Truncar campos que excedem o limite
 
     # ========================================================================
     # VALIDAÇÃO DE CAMPOS
@@ -465,11 +466,34 @@ class ConversorCatalogoSiscomex:
         if produto.get("cpfCnpjRaiz") and not self.validar_cpf_cnpj_raiz(produto["cpfCnpjRaiz"], row):
             linha_valida = False
 
-        if produto.get("denominacao") and not self.validar_tamanho(produto["denominacao"], "denominacao", MAX_DENOMINACAO, row):
-            linha_valida = False
+        # Truncamento automático ou validação de tamanho
+        if produto.get("denominacao") and len(str(produto["denominacao"])) > MAX_DENOMINACAO:
+            if self.auto_truncar:
+                original_len = len(produto["denominacao"])
+                produto["denominacao"] = produto["denominacao"][:MAX_DENOMINACAO]
+                self.avisos.append(
+                    f"Linha {row}: 'denominacao' truncada de {original_len} para {MAX_DENOMINACAO} caracteres."
+                )
+            else:
+                self.erros.append(
+                    f"Linha {row}: Campo 'denominacao' excede {MAX_DENOMINACAO} caracteres "
+                    f"(tem {len(produto['denominacao'])}). Ative 'Truncar automaticamente' para cortar."
+                )
+                linha_valida = False
 
-        if produto.get("descricao") and not self.validar_tamanho(produto["descricao"], "descricao", MAX_DESCRICAO, row):
-            linha_valida = False
+        if produto.get("descricao") and len(str(produto["descricao"])) > MAX_DESCRICAO:
+            if self.auto_truncar:
+                original_len = len(produto["descricao"])
+                produto["descricao"] = produto["descricao"][:MAX_DESCRICAO]
+                self.avisos.append(
+                    f"Linha {row}: 'descricao' truncada de {original_len} para {MAX_DESCRICAO} caracteres."
+                )
+            else:
+                self.erros.append(
+                    f"Linha {row}: Campo 'descricao' excede {MAX_DESCRICAO} caracteres "
+                    f"(tem {len(produto['descricao'])}). Ative 'Truncar automaticamente' para cortar."
+                )
+                linha_valida = False
 
         if not linha_valida:
             return None
