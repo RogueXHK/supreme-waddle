@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Arquivos gerados por testes
+TESTE_*.xlsx
+TESTE_*.json
+MODELO_*.xlsx
+
+# Ambiente virtual
+venv/
+.venv/
+env/
+
+# VS Code
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp
+*.tmp
+*.bak

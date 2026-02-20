@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ortodente | Catálogo Siscomex - Conversor CATP</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦷</text></svg>">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #0f4c81;
+            --primary-light: #1a6fb5;
+            --primary-dark: #0a3560;
+            --accent: #00b894;
+            --accent-dark: #00856a;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+            --bg: #f0f4f8;
+            --bg-card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 32px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .header-badge {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: var(--text-light);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 6px;
+            box-shadow: var(--shadow);
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(15, 76, 129, 0.3);
+        }
+
+        .tab-icon { font-size: 18px; }
+
+        /* ===== CARDS / PAINÉIS ===== */
+        .panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .card-header .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-header .icon.blue { background: #e3f2fd; }
+        .card-header .icon.green { background: #e8f5e9; }
+        .card-header .icon.orange { background: #fff3e0; }
+        .card-header .icon.purple { background: #f3e5f5; }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* ===== FORMULÁRIOS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* ===== UPLOAD AREA ===== */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            background: #fafbfc;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: #eef4fb;
+        }
+
+        .upload-area.has-file {
+            border-color: var(--success);
+            background: #f0faf4;
+        }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .file-name {
+            display: none;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--success);
+            border: 1px solid #c6f6d5;
+        }
+
+        .upload-area.has-file .file-name { display: inline-block; }
+        .upload-area.has-file .upload-text { color: var(--success); }
+
+        /* ===== RADIO/SELECT ===== */
+        .modo-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .modo-option {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .modo-option input[type="radio"] { display: none; }
+
+        .modo-option label {
+            display: block;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .modo-option label:hover {
+            border-color: var(--primary-light);
+        }
+
+        .modo-option input:checked + label {
+            border-color: var(--primary);
+            background: #eef4fb;
+            color: var(--primary);
+        }
+
+        .modo-option .modo-title {
+            font-weight: 700;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .modo-option .modo-desc {
+            font-size: 11px;
+            color: var(--text-light);
+            display: block;
+        }
+
+        .modo-option input:checked + label .modo-desc {
+            color: var(--primary-light);
+        }
+
+        /* ===== BOTÕES ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(15, 76, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(15, 76, 129, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.25);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.loading .spinner { display: inline-block; }
+        .btn.loading .btn-text { display: none; }
+
+        /* ===== RESULTADO ===== */
+        .resultado {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .resultado.show { display: block; }
+
+        .resultado-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+        }
+
+        .resultado-header.sucesso {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 1px solid #a5d6a7;
+        }
+
+        .resultado-header.erro {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 1px solid #ef9a9a;
+        }
+
+        .resultado-icon { font-size: 36px; }
+
+        .resultado-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .resultado-info p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .resultado-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 100px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== JSON PREVIEW ===== */
+        .json-preview {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow: auto;
+            position: relative;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .json-preview .copy-btn {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .json-preview .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* ===== ERROS / AVISOS ===== */
+        .messages { margin-top: 16px; }
+
+        .msg {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .msg-erro {
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+            color: #c53030;
+        }
+
+        .msg-aviso {
+            background: #fffcf0;
+            border-left: 4px solid var(--warning);
+            color: #975a16;
+        }
+
+        .msg-icon { flex-shrink: 0; font-size: 16px; }
+
+        /* ===== GUIA ===== */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .guide-step {
+            padding: 24px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+        }
+
+        .guide-step .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .guide-step h4 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .guide-step p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* ===== TABELA DE ATRIBUTOS ===== */
+        .att-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .att-table th {
+            background: var(--primary);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .att-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .att-table tr:nth-child(even) { background: #f8fafc; }
+        .att-table tr:hover { background: #eef4fb; }
+
+        .att-code {
+            font-family: 'Consolas', monospace;
+            background: #eef4fb;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-light);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: 48px;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column; text-align: center; }
+            .hero h2 { font-size: 22px; }
+            .tabs { flex-direction: column; }
+            .tab-btn { min-width: 100%; }
+            .card { padding: 20px; }
+            .modo-options { flex-direction: column; }
+            .btn-group { flex-direction: column; }
+            .resultado-stats { flex-direction: column; }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+            margin-top: 8px;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(10px); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <span class="logo-icon">🦷</span>
+            <div class="logo-text">
+                <h1>Ortodente</h1>
+                <span>Catálogo de Produtos Siscomex</span>
+            </div>
+        </a>
+        <span class="header-badge">API CATP v3</span>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+    <!-- Hero -->
+    <div class="hero">
+        <h2>Conversor de Catálogo de Produtos</h2>
+        <p>Converta planilhas Excel para JSON no padrão da API do Portal Único Siscomex com validação completa</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="trocarTab('converter')">
+            <span class="tab-icon">📊</span> Excel → JSON
+        </button>
+        <button class="tab-btn" onclick="trocarTab('importar')">
+            <span class="tab-icon">📥</span> JSON → Excel
+        </button>
+        <button class="tab-btn" onclick="trocarTab('modelo')">
+            <span class="tab-icon">📝</span> Planilha Modelo
+        </button>
+        <button class="tab-btn" onclick="trocarTab('guia')">
+            <span class="tab-icon">📖</span> Guia
+        </button>
+    </div>
+
+    <!-- ===== PAINEL: CONVERTER ===== -->
+    <div id="panel-converter" class="panel active">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon blue">📊</div>
+                <div>
+                    <h3>Converter Excel → JSON</h3>
+                    <p>Envie sua planilha e receba o JSON pronto para a API Siscomex</p>
+                </div>
+            </div>
+
+            <form id="form-converter" onsubmit="return false;">
+                <!-- Upload -->
+                <div class="form-group">
+                    <label>Arquivo Excel (.xlsx ou .xls)</label>
+                    <div class="upload-area" id="upload-excel">
+                        <input type="file" id="file-excel" accept=".xlsx,.xls" onchange="onFileSelected(this, 'upload-excel')">
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Clique ou arraste o arquivo aqui</div>
+                        <div class="upload-hint">Aceita .xlsx e .xls (conversão automática)</div>
+                        <div class="file-name" id="fname-excel"></div>
+                    </div>
+                </div>
+
+                <!-- Valores padrão para colunas ausentes -->
+                <div class="form-group">
+                    <label>🏢 CNPJ Raiz (8 dígitos) — <small style="font-weight:400;color:var(--text-light)">preencha se não houver coluna na planilha</small></label>
+                    <input type="text" id="cnpj-padrao" placeholder="Ex: 25940099" maxlength="14"
+                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Somente os 8 primeiros dígitos do CNPJ (raiz). Usado quando a planilha não tem coluna cpfCnpjRaiz.</p>
+                </div>
+
+                <div class="form-group">
+                    <label>📦 Modalidade padrão — <small style="font-weight:400;color:var(--text-light)">quando não houver coluna na planilha</small></label>
+                    <select id="modalidade-padrao"
+                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
+                        <option value="">-- Não usar (coluna já existe na planilha) --</option>
+                        <option value="IMPORTACAO" selected>IMPORTAÇÃO</option>
+                        <option value="EXPORTACAO">EXPORTAÇÃO</option>
+                    </select>
+                    <p class="hint">Aplicado a todos os produtos quando a planilha não tem coluna de modalidade.</p>
+                </div>
+
+                <!-- Modo -->
+                <div class="form-group">
+                    <label>Modo de conversão</label>
+                    <div class="modo-options">
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-post" value="post" checked>
+                            <label for="modo-post">
+                                <span class="modo-title">🆕 POST (Criar)</span>
+                                <span class="modo-desc">Novos produtos na API</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-put" value="put">
+                            <label for="modo-put">
+                                <span class="modo-title">✏️ PUT (Atualizar)</span>
+                                <span class="modo-desc">Atualizar existentes</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-completo" value="completo">
+                            <label for="modo-completo">
+                                <span class="modo-title">📦 Completo</span>
+                                <span class="modo-desc">Formato exportação</span>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="hint">
+                        <strong>POST:</strong> Sem seq/codigo/versao (inclusão) &nbsp;|&nbsp;
+                        <strong>PUT:</strong> Com codigo (atualização) &nbsp;|&nbsp;
+                        <strong>Completo:</strong> Igual ao portal
+                    </p>
+                </div>
+
+                <!-- Botões -->
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-block" id="btn-converter" onclick="converterExcel()">
+                        <span class="spinner"></span>
+                        <span class="btn-text">⚡ Converter para JSON</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resultado -->
+        <div class="resultado" id="resultado-converter">
+            <div class="resultado-header sucesso" id="res-header">
+                <span class="resultado-icon" id="res-icon">✅</span>
+                <div class="resultado-info">
+                    <h4 id="res-titulo">Conversão concluída!</h4>
+                    <p id="res-subtitulo"></p>
+                </div>
+            </div>
+
+            <div class="resultado-stats" id="res-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">Produtos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-modo">POST</div>
+                    <div class="stat-label">Modo</div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a class="btn btn-success" id="btn-download-json" href="#" download>
+                    ⬇️ Baixar JSON
+                </a>
+                <button class="btn btn-outline btn-sm" onclick="copiarJson()">
+                    📋 Copiar JSON
+                </button>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">
+                    Preview do JSON:
+                </label>
+                <div class="json-preview" id="json-preview">
+                    <button class="copy-btn" onclick="copiarJson()">📋 Copiar</button>
+                    <code id="json-code"></code>
+                </div>
+            </div>
+
+            <div class="messages" id="mensagens-converter"></div>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL: IMPORTAR ===== -->
+    <div id="panel-importar" class="panel">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon green">📥</div>
+                <div>
+                    <h3>Importar JSON → Excel</h3>
+                    <p>Converta o JSON exportado do Portal Siscomex para planilha Excel editável</p>
+                </div>
+            </div>
+
+            <form id="form-importar" onsubmit="return false;">
+                <div class="form-group">
+                    <label>Arquivo JSON do portal (.json)</label>
+                    <div class="upload-area" id="upload-json">
+                        <input type="file" id="file-json" accept=".json" onchange="onFileSelected(this, 'upload-json')">
+                        <span class="upload-icon">📄</span>
+                        <div class="upload-text">Clique ou arraste o JSON aqui</div>
+                        <div class="upload-hint">JSON exportado do catálogo do portal</div>
+                        <div class="file-name" id="fname-json"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-block" id="btn-importar" onclick="importarJson()">
+                        <span class="spinner"></span>
+                        <span class="btn-text">📊 Converter para Excel</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="resultado" id="resultado-importar">
+            <div class="resultado-header sucesso">
+                <span class="resultado-icon">✅</span>
+                <div class="resultado-info">
+                    <h4 id="res-import-titulo">Conversão concluída!</h4>
+                    <p id="res-import-sub"></p>
+                </div>
+            </div>
+            <div class="btn-group">
+                <a class="btn btn-success" id="btn-download-excel" href="#" download>
+                    ⬇️ Baixar Planilha Excel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL: MODELO ===== -->
+    <div id="panel-modelo" class="panel">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon orange">📝</div>
+                <div>
+                    <h3>Planilha Modelo</h3>
+                    <p>Baixe o modelo pronto com todas as colunas corretas e instruções</p>
+                </div>
+            </div>
+
+            <p style="margin-bottom: 20px; color: var(--text-light);">
+                A planilha modelo contém todos os campos necessários para cadastro de produtos
+                no catálogo Siscomex, com uma linha de descrição e uma de exemplo preenchida.
+            </p>
+
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 15px; margin-bottom: 12px;">Conteúdo do modelo:</h4>
+                <div class="guide-grid">
+                    <div class="guide-step">
+                        <div class="step-num">1</div>
+                        <h4>Aba PRODUTOS</h4>
+                        <p>Colunas prontas com campos obrigatórios e atributos comuns para produtos médicos/odontológicos</p>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">2</div>
+                        <h4>Aba INSTRUÇÕES</h4>
+                        <p>Guia completo de preenchimento com descrição de cada campo e atributo</p>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">3</div>
+                        <h4>Aba CÓDIGOS PAÍS</h4>
+                        <p>Tabela de códigos de país mais usados (China=82, EUA=249, etc.)</p>
+                    </div>
+                </div>
+            </div>
+
+            <a class="btn btn-success" href="/modelo">
+                ⬇️ Baixar Planilha Modelo (.xlsx)
+            </a>
+        </div>
+
+        <!-- Tabela de atributos -->
+        <div class="card">
+            <div class="card-header">
+                <div class="icon purple">🏷️</div>
+                <div>
+                    <h3>Referência de Atributos</h3>
+                    <p>Códigos de atributos comuns para produtos médicos e odontológicos</p>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="att-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Exemplo</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="att-code">ATT_14540</span></td>
+                            <td>Condição do Produto</td>
+                            <td>01 (Novo)</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14545</span></td>
+                            <td>País de Origem</td>
+                            <td>82 (China)</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14546</span></td>
+                            <td>Validade do Produto</td>
+                            <td>INDETERMINADO</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14547</span></td>
+                            <td>Produto Controlado</td>
+                            <td>false</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14551</span></td>
+                            <td>Registro ANVISA</td>
+                            <td>80853390002</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14554</span></td>
+                            <td>Produto Perigoso</td>
+                            <td>false</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14555</span></td>
+                            <td>Fabricante/Exportador</td>
+                            <td>Nome completo do fabricante</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14556</span></td>
+                            <td>Tipo de Embalagem</td>
+                            <td>11 (múltiplos separados por ;)</td>
+                            <td style="color: var(--accent); font-weight: 600;">Multivalorado</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_14860</span></td>
+                            <td>Nome Comercial</td>
+                            <td>ARCO NITI 12 INF/SUP 10UN</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_15120</span></td>
+                            <td>Composição/Material</td>
+                            <td>NIQUEL TITANIO</td>
+                            <td>Simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ATT_15121</span></td>
+                            <td>Modelo/Referência</td>
+                            <td>AW002-12U</td>
+                            <td>Simples</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL: GUIA ===== -->
+    <div id="panel-guia" class="panel">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon blue">📖</div>
+                <div>
+                    <h3>Como Usar</h3>
+                    <p>Passo a passo para converter sua planilha</p>
+                </div>
+            </div>
+
+            <div class="guide-grid">
+                <div class="guide-step">
+                    <div class="step-num">1</div>
+                    <h4>Baixe o Modelo</h4>
+                    <p>Na aba "Planilha Modelo", baixe o arquivo .xlsx com as colunas corretas e exemplo</p>
+                </div>
+                <div class="guide-step">
+                    <div class="step-num">2</div>
+                    <h4>Preencha os Dados</h4>
+                    <p>Preencha a planilha a partir da <strong>linha 4</strong> (linha 2 = descrições, linha 3 = exemplo)</p>
+                </div>
+                <div class="guide-step">
+                    <div class="step-num">3</div>
+                    <h4>Escolha o Modo</h4>
+                    <p><strong>POST</strong> para novos produtos, <strong>PUT</strong> para atualizar (requer código), <strong>Completo</strong> para formato do portal</p>
+                </div>
+                <div class="guide-step">
+                    <div class="step-num">4</div>
+                    <h4>Converta</h4>
+                    <p>Faça upload da planilha, clique em converter e baixe o JSON gerado</p>
+                </div>
+                <div class="guide-step">
+                    <div class="step-num">5</div>
+                    <h4>Use na API</h4>
+                    <p>Envie o JSON para <code>POST /catp/api/ext/produto</code> ou <code>PUT /catp/api/ext/produto/{cnpj}/{codigo}</code></p>
+                </div>
+                <div class="guide-step">
+                    <div class="step-num">6</div>
+                    <h4>Importe do Portal</h4>
+                    <p>Use "JSON → Excel" para converter um JSON exportado do portal em planilha editável</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon green">✅</div>
+                <div>
+                    <h3>Campos Obrigatórios</h3>
+                    <p>Campos que devem estar preenchidos na planilha</p>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="att-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Descrição</th>
+                            <th>Regra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="att-code">denominacao</span></td>
+                            <td>Nome do produto</td>
+                            <td>Máximo 200 caracteres</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">descricao</span></td>
+                            <td>Descrição detalhada</td>
+                            <td>Máximo 2000 caracteres</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">cpfCnpjRaiz</span></td>
+                            <td>CNPJ raiz da empresa</td>
+                            <td>8 dígitos, somente números</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">modalidade</span></td>
+                            <td>Tipo de operação</td>
+                            <td>IMPORTACAO ou EXPORTACAO</td>
+                        </tr>
+                        <tr>
+                            <td><span class="att-code">ncm</span></td>
+                            <td>Classificação fiscal</td>
+                            <td>Exatamente 8 dígitos numéricos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon orange">🔗</div>
+                <div>
+                    <h3>Endpoints da API</h3>
+                    <p>URLs da API CATP para envio dos dados</p>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="att-table">
+                    <thead>
+                        <tr>
+                            <th>Ação</th>
+                            <th>Método</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Criar produto</td>
+                            <td><span class="att-code">POST</span></td>
+                            <td><code>/catp/api/ext/produto</code></td>
+                        </tr>
+                        <tr>
+                            <td>Atualizar produto</td>
+                            <td><span class="att-code">PUT</span></td>
+                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Consultar produto</td>
+                            <td><span class="att-code">GET</span></td>
+                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Listar produtos</td>
+                            <td><span class="att-code">GET</span></td>
+                            <td><code>/catp/api/ext/produto?cpfCnpjRaiz={cnpj}</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 16px; font-size: 13px; color: var(--text-light);">
+                <strong>Produção:</strong> https://portalunico.siscomex.gov.br<br>
+                <strong>Validação:</strong> https://val.portalunico.siscomex.gov.br
+            </p>
+        </div>
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>🦷 Ortodente — Conversor Catálogo de Produtos Siscomex (CATP API) &nbsp;|&nbsp; 
+    <a href="https://docs.portalunico.siscomex.gov.br/api/catp/" target="_blank">Documentação Oficial</a></p>
+</footer>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // JSON completo armazenado para cópia
+    let jsonCompleto = '';
+
+    // ===== TABS =====
+    function trocarTab(nome) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('panel-' + nome).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // ===== FILE UPLOAD =====
+    function onFileSelected(input, areaId) {
+        const area = document.getElementById(areaId);
+        const fnameId = areaId.replace('upload-', 'fname-');
+        const fnameEl = document.getElementById(fnameId);
+
+        if (input.files.length > 0) {
+            area.classList.add('has-file');
+            fnameEl.textContent = '📎 ' + input.files[0].name;
+            const sizeKB = (input.files[0].size / 1024).toFixed(1);
+            fnameEl.textContent += ` (${sizeKB} KB)`;
+        } else {
+            area.classList.remove('has-file');
+            fnameEl.textContent = '';
+        }
+    }
+
+    // Drag & Drop
+    document.querySelectorAll('.upload-area').forEach(area => {
+        area.addEventListener('dragover', (e) => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', (e) => {
+            e.preventDefault();
+            area.classList.remove('dragover');
+            const input = area.querySelector('input[type="file"]');
+            input.files = e.dataTransfer.files;
+            const areaId = area.id;
+            onFileSelected(input, areaId);
+        });
+    });
+
+    // ===== CONVERTER EXCEL → JSON =====
+    async function converterExcel() {
+        const fileInput = document.getElementById('file-excel');
+        if (!fileInput.files.length) {
+            toast('Selecione um arquivo Excel primeiro!', 'error');
+            return;
+        }
+
+        const modo = document.querySelector('input[name="modo"]:checked').value;
+        const btn = document.getElementById('btn-converter');
+        const resultado = document.getElementById('resultado-converter');
+
+        btn.classList.add('loading');
+        btn.disabled = true;
+        resultado.classList.remove('show');
+
+        const formData = new FormData();
+        formData.append('arquivo', fileInput.files[0]);
+        formData.append('modo', modo);
+
+        // Valores padrão
+        const cnpjPadrao = document.getElementById('cnpj-padrao').value.trim();
+        const modalidadePadrao = document.getElementById('modalidade-padrao').value;
+        if (cnpjPadrao) formData.append('cnpj_padrao', cnpjPadrao);
+        if (modalidadePadrao) formData.append('modalidade_padrao', modalidadePadrao);
+
+        try {
+            const res = await fetch('/converter', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.sucesso) {
+                // Sucesso
+                document.getElementById('res-header').className = 'resultado-header sucesso';
+                document.getElementById('res-icon').textContent = '✅';
+                document.getElementById('res-titulo').textContent = data.mensagem;
+                document.getElementById('res-subtitulo').textContent = `Modo: ${data.modo} | Pronto para download`;
+                document.getElementById('stat-total').textContent = data.total_produtos;
+                document.getElementById('stat-modo').textContent = data.modo;
+                document.getElementById('btn-download-json').href = '/download/' + data.arquivo_download;
+                document.getElementById('json-code').textContent = data.preview;
+                jsonCompleto = data.json_completo;
+
+                // Mensagens
+                renderMensagens('mensagens-converter', [], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast('Conversão concluída com sucesso!', 'success');
+            } else {
+                // Erro
+                document.getElementById('res-header').className = 'resultado-header erro';
+                document.getElementById('res-icon').textContent = '❌';
+                document.getElementById('res-titulo').textContent = data.erro;
+                document.getElementById('res-subtitulo').textContent = 'Corrija os erros abaixo e tente novamente';
+                document.getElementById('stat-total').textContent = '0';
+                document.getElementById('stat-modo').textContent = '-';
+                document.getElementById('btn-download-json').href = '#';
+                document.getElementById('json-code').textContent = '';
+                jsonCompleto = '';
+
+                renderMensagens('mensagens-converter', data.erros || [], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast('Erros encontrados na planilha', 'error');
+            }
+        } catch (err) {
+            toast('Erro de conexão: ' + err.message, 'error');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    // ===== IMPORTAR JSON → EXCEL =====
+    async function importarJson() {
+        const fileInput = document.getElementById('file-json');
+        if (!fileInput.files.length) {
+            toast('Selecione um arquivo JSON primeiro!', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('btn-importar');
+        const resultado = document.getElementById('resultado-importar');
+
+        btn.classList.add('loading');
+        btn.disabled = true;
+        resultado.classList.remove('show');
+
+        const formData = new FormData();
+        formData.append('arquivo', fileInput.files[0]);
+
+        try {
+            const res = await fetch('/json-para-excel', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.sucesso) {
+                document.getElementById('res-import-titulo').textContent = data.mensagem;
+                document.getElementById('res-import-sub').textContent = 'Planilha pronta para edição';
+                document.getElementById('btn-download-excel').href = '/download/' + data.arquivo_download;
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth' });
+                toast('JSON convertido para Excel!', 'success');
+            } else {
+                toast(data.erro, 'error');
+            }
+        } catch (err) {
+            toast('Erro de conexão: ' + err.message, 'error');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    // ===== COPIAR JSON =====
+    function copiarJson() {
+        if (!jsonCompleto) {
+            toast('Nenhum JSON para copiar', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(jsonCompleto).then(() => {
+            toast('JSON copiado para a área de transferência!', 'success');
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = jsonCompleto;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            toast('JSON copiado!', 'success');
+        });
+    }
+
+    // ===== MENSAGENS =====
+    function renderMensagens(containerId, erros, avisos) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        erros.forEach(e => {
+            container.innerHTML += `<div class="msg msg-erro"><span class="msg-icon">⛔</span><span>${e}</span></div>`;
+        });
+
+        avisos.forEach(a => {
+            container.innerHTML += `<div class="msg msg-aviso"><span class="msg-icon">⚠️</span><span>${a}</span></div>`;
+        });
+    }
+
+    // ===== TOAST =====
+    function toast(msg, tipo = 'success') {
+        const container = document.getElementById('toast-container');
+        const el = document.createElement('div');
+        el.className = 'toast ' + tipo;
+        el.textContent = msg;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,337 @@
+[ {
+  "seq" : 1,
+  "codigo" : 1,
+  "descricao" : "Indicado Para O Tratamento Fechado De Fraturas Dentárias. Fabricada Em Aço Inox, É Um Dispositivo Médico Indicado Para Fixação Da Maxila E Da Mandíbula Durante Cirurgias Bucomaxilofaciais",
+  "denominacao" : "INFINITY - BARRA DE ERICH P/ FRATURA 8 SEGMENTOS DE 14CM (EMBALAGEM C/ 1,12 METROS)",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "90211010",
+  "versao" : "2",
+  "atributos" : [ {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390005"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "BARRA DE ERICH P/ FRATURA 8 SEGMENTOS DE 14CM (EMBALAGEM C/ 1,12 METROS)"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "IA06-140"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "AÇO INOX"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "INDERTEMINADO"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "HANGZHOU XINGCHEN 3B DENTAL INSTRUMENT &MATERIAL CO.,LTD No 619, Guoting Street, Chunjiang Subdistrict, Fuyang District,Hangzhou,311421, China."
+  }, {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "11" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "1", "BR212-35N" ]
+}, {
+  "seq" : 2,
+  "codigo" : 2,
+  "descricao" : "Indicado Para Tratamentos Ortodônticos. Ele É Projetado Para Oferecer Excelente Memória De Forma E Resistência, Sendo Ideal Para O Alinhamento Inicial Dos Dentes. Sua Flexibilidade Permite Uma Adaptação Eficiente E Confortável, Auxiliando No Processo De Nivelamento Dentário.",
+  "denominacao" : "ARCO NITI 12 (M) INF/SUP 10UN",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "90211010",
+  "versao" : "3",
+  "atributos" : [ {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390002"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "ARCO NITI 12 (M) INF/SUP 10UN"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "AW002-12U"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "NIQUEL TITANIO"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "INDETERMINADA"
+  }, {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "HANGZHOU XINGCHEN 3B DENTAL INSTRUMENT E MATERIAL CO.,LTD"
+  }, {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "11" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "6128" ]
+}, {
+  "seq" : 3,
+  "codigo" : 3,
+  "descricao" : "Indicado Para Tratamentos Ortodônticos. Ele É Projetado Para Oferecer Excelente Memória De Forma E Resistência, Sendo Ideal Para O Alinhamento Inicial Dos Dentes. Sua Flexibilidade Permite Uma Adaptação Eficiente E Confortável, Auxiliando No Processo De Nivelamento Dentário.",
+  "denominacao" : " ARCO NITI 14 (M) INF/SUP 10UN",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "90211010",
+  "versao" : "2",
+  "atributos" : [ {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "HANGZHOU XINGCHEN 3B DENTAL INSTRUMENT E MATERIAL CO.,LTD"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "INDETERMINADO"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "NIQUEL TITANIO"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "AW002-14U"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "ARCO NITI 14 (M) INF/SUP 10UN"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390002"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "11" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "6129" ]
+}, {
+  "seq" : 4,
+  "codigo" : 4,
+  "descricao" : "Indicado Para Tratamentos Ortodônticos. Ele É Projetado Para Oferecer Excelente Memória De Forma E Resistência, Sendo Ideal Para O Alinhamento Inicial Dos Dentes. Sua Flexibilidade Permite Uma Adaptação Eficiente E Confortável, Auxiliando No Processo De Nivelamento Dentário.\n",
+  "denominacao" : "ARCO NITI 16 (M) INF/SUP 10UN",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "90211010",
+  "versao" : "1",
+  "atributos" : [ {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "HANGZHOU XINGCHEN 3B DENTAL INSTRUMENT E MATERIAL CO.,LTD"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390002"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "AW002-16U"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "NIQUEL TITANIO"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "INDETERMINADO"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "ARCO NITI 16 (M) INF/SUP 10UN"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "11" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "6130" ]
+}, {
+  "seq" : 5,
+  "codigo" : 5,
+  "descricao" : "Indicado Para Tratamentos Ortodônticos. Ele É Projetado Para Oferecer Excelente Memória De Forma E Resistência, Sendo Ideal Para O Alinhamento Inicial Dos Dentes. Sua Flexibilidade Permite Uma Adaptação Eficiente E Confortável, Auxiliando No Processo De Nivelamento Dentário.\n",
+  "denominacao" : " ARCO NITI 18 (M) INF/SUP 10UN",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "90211010",
+  "versao" : "1",
+  "atributos" : [ {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "HANGZHOU XINGCHEN 3B DENTAL INSTRUMENT E MATERIAL CO.,LTD"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "INDETERMINADA"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "NIQUEL TITANIO"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "AW002-18U"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : " ARCO NITI 18 (M) INF/SUP 10UN"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390002"
+  }, {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "11" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "6131" ]
+}, {
+  "seq" : 6,
+  "codigo" : 6,
+  "descricao" : "GERAL GEL ENZIMÁTICO PARA REMOÇÃO ATRAUMÁTICA DE CÁRIES É UM PRODUTO ODONTOLÓGICO EM GEL PARA TRATAMENTO ATRAUMÁTICO DE CÁRIES QUE COMPREENDE UMA ATIVIDADE ENZIMÁTICA DE 3.000 U/MG*",
+  "denominacao" : "BRIX 3000 GEL REMOCAO DE CARIE 3ML",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "30064012",
+  "versao" : "1",
+  "atributos" : [ {
+    "atributo" : "ATT_14555",
+    "valor" : "BRIX MEDICAL SCIENCE"
+  }, {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390008"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "BRIX 3000 GEL REMOCAO DE CARIE 3ML"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "GEL A BASE DE PAPAÍNA"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "2 ANOS"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "13600"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "10" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "13600" ]
+}, {
+  "seq" : 7,
+  "codigo" : 7,
+  "descricao" : "GEL ENZIMÁTICO PARA REMOÇÃO ATRAUMÁTICA DE CÁRIES É UM PRODUTO ODONTOLÓGICO EM GEL PARA TRATAMENTO ATRAUMÁTICO DE CÁRIES QUE COMPREENDE UMA ATIVIDADE ENZIMÁTICA DE 3.000 U/MG*",
+  "denominacao" : "BRIX 3000 GEL REMOCAO DE CARIE 1ML",
+  "cpfCnpjRaiz" : "25940099",
+  "situacao" : "Ativado",
+  "modalidade" : "IMPORTACAO",
+  "ncm" : "30064012",
+  "versao" : "1",
+  "atributos" : [ {
+    "atributo" : "ATT_14545",
+    "valor" : "82"
+  }, {
+    "atributo" : "ATT_14860",
+    "valor" : "BRIX 3000 GEL REMOCAO DE CARIE 1ML"
+  }, {
+    "atributo" : "ATT_15121",
+    "valor" : "13599"
+  }, {
+    "atributo" : "ATT_15120",
+    "valor" : "GEL A BASE DE PAPAÍNA"
+  }, {
+    "atributo" : "ATT_14546",
+    "valor" : "2 ANOS"
+  }, {
+    "atributo" : "ATT_14540",
+    "valor" : "01"
+  }, {
+    "atributo" : "ATT_14554",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14555",
+    "valor" : "BRIX MEDICAL SCIENCE"
+  }, {
+    "atributo" : "ATT_14547",
+    "valor" : "false"
+  }, {
+    "atributo" : "ATT_14551",
+    "valor" : "80853390008"
+  } ],
+  "atributosMultivalorados" : [ {
+    "atributo" : "ATT_14556",
+    "valores" : [ "10" ]
+  } ],
+  "atributosCompostos" : [ ],
+  "atributosCompostosMultivalorados" : [ ],
+  "codigosInterno" : [ "13599" ]
+} ]
