@@ -647,7 +647,8 @@ def vincular_operador():
                 'seq': len(vinculos) + 1,
                 'codigoProduto': codigo_int,
                 'codigoPais': codigo_pais,
-                'codigoOperadorEstrangeiro': operador
+                'codigoOperadorEstrangeiro': operador,
+                'fabricanteConhecido': 'SIM'
             }
             if cnpj_raiz:
                 vinculo['cpfCnpjRaiz'] = cnpj_raiz
