@@ -1508,6 +1508,15 @@
                     <p class="hint">Somente os 8 primeiros dígitos do CNPJ. Necessário para o campo cpfCnpjRaiz do JSON.</p>
                 </div>
 
+                <!-- Código do País -->
+                <div class="form-group">
+                    <label>🌍 Código do País — <small style="font-weight:400;color:var(--text-light)">obrigatório (se não tiver na planilha)</small></label>
+                    <input type="text" id="codigo-pais-vincular" placeholder="Ex: 249 (China), 063 (Argentina)" maxlength="5"
+                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Código numérico do país do operador (tabela Siscomex). Se a planilha tiver coluna "codigoPais", este campo é ignorado.</p>
+                </div>
+
                 <button type="button" class="btn-primary" id="btn-vincular" onclick="vincularOperador()">
                     🔗 Gerar JSON de Vinculação
                 </button>
@@ -1562,13 +1571,18 @@
                     <tbody>
                         <tr style="border-bottom:1px solid var(--border);">
                             <td style="padding:8px;"><strong>codigo</strong></td>
-                            <td style="padding:8px;">codigo, código, code, produto, cod, codigo produto</td>
+                            <td style="padding:8px;">codigo, código, code, produto, cod, codigoProduto</td>
                             <td style="padding:8px;">✅ Código do produto no catálogo (número retornado pelo Siscomex)</td>
                         </tr>
                         <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
                             <td style="padding:8px;"><strong>codigoOperadorEstrangeiro</strong></td>
                             <td style="padding:8px;">codigoOperadorEstrangeiro, operador, codigo operador, operador estrangeiro</td>
                             <td style="padding:8px;">✅ Código do operador estrangeiro cadastrado no Siscomex</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>codigoPais</strong></td>
+                            <td style="padding:8px;">codigoPais, codigo pais, país, pais, country</td>
+                            <td style="padding:8px;">✅ Código do país do operador (ou preencha no campo acima)</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1917,6 +1931,9 @@
 
         const cnpjRaiz = document.getElementById('cnpj-raiz-vincular').value.trim();
         if (cnpjRaiz) formData.append('cnpj_raiz_vincular', cnpjRaiz);
+
+        const codigoPais = document.getElementById('codigo-pais-vincular').value.trim();
+        if (codigoPais) formData.append('codigo_pais_vincular', codigoPais);
 
         try {
             const res = await fetch('/vincular-operador', { method: 'POST', body: formData });

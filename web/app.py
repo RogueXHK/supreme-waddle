@@ -538,6 +538,7 @@ def vincular_operador():
         return jsonify({'sucesso': False, 'erro': 'Formato inválido. Envie um arquivo .xlsx ou .xls'}), 400
 
     cnpj_raiz = request.form.get('cnpj_raiz_vincular', '').strip().replace('.', '').replace('-', '').replace('/', '')
+    codigo_pais_form = request.form.get('codigo_pais_vincular', '').strip()
 
     try:
         uid = str(uuid.uuid4())[:8]
@@ -566,18 +567,23 @@ def vincular_operador():
             cabecalhos.append(val)
 
         # Mapear colunas
-        ALIASES_CODIGO = ['codigo', 'código', 'code', 'produto', 'cod', 'codigo produto', 'código produto', 'codigo_produto']
+        ALIASES_CODIGO = ['codigo', 'código', 'code', 'produto', 'cod', 'codigo produto', 'código produto', 'codigo_produto',
+                         'codigoproduto', 'codigo do produto', 'código do produto']
         ALIASES_OPERADOR = ['codigooperadorestrangeiro', 'operador', 'codigo operador', 'código operador',
                            'operador estrangeiro', 'codigo_operador', 'cod operador', 'cod_operador']
+        ALIASES_PAIS = ['codigopais', 'codigo pais', 'código país', 'pais', 'país', 'country', 'codigo_pais']
 
         idx_codigo = None
         idx_operador = None
+        idx_pais = None
         for i, cab in enumerate(cabecalhos):
             cab_limpo = cab.replace('_', ' ')
             if idx_codigo is None and (cab_limpo in ALIASES_CODIGO):
                 idx_codigo = i
             if idx_operador is None and (cab_limpo in ALIASES_OPERADOR):
                 idx_operador = i
+            if idx_pais is None and (cab_limpo in ALIASES_PAIS):
+                idx_pais = i
 
         if idx_codigo is None:
             wb.close()
@@ -616,12 +622,19 @@ def vincular_operador():
 
             codigo = limpar_val(idx_codigo)
             operador = limpar_val(idx_operador)
+            pais_excel = limpar_val(idx_pais) if idx_pais is not None else ''
 
             if not codigo:
                 avisos.append(f'Linha {row_num}: código do produto vazio, ignorada.')
                 continue
             if not operador:
                 avisos.append(f'Linha {row_num}: código do operador vazio, ignorada.')
+                continue
+
+            # País: prioridade Excel > formulário
+            codigo_pais = pais_excel if pais_excel else codigo_pais_form
+            if not codigo_pais:
+                avisos.append(f'Linha {row_num}: código do país vazio, ignorada.')
                 continue
 
             try:
@@ -632,7 +645,8 @@ def vincular_operador():
 
             vinculo = {
                 'seq': len(vinculos) + 1,
-                'codigo': codigo_int,
+                'codigoProduto': codigo_int,
+                'codigoPais': codigo_pais,
                 'codigoOperadorEstrangeiro': operador
             }
             if cnpj_raiz:
