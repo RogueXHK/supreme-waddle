@@ -523,6 +523,191 @@ def listar_atributos():
     return jsonify(ATRIBUTOS_LABELS)
 
 
+@app.route('/converter-operador', methods=['POST'])
+def converter_operador():
+    """Converte Excel de operadores estrangeiros para JSON."""
+    if 'arquivo' not in request.files:
+        return jsonify({'sucesso': False, 'erro': 'Nenhum arquivo enviado.'}), 400
+
+    arquivo = request.files['arquivo']
+    if arquivo.filename == '':
+        return jsonify({'sucesso': False, 'erro': 'Nenhum arquivo selecionado.'}), 400
+
+    ext = os.path.splitext(arquivo.filename)[1].lower()
+    if ext not in {'.xlsx', '.xls'}:
+        return jsonify({'sucesso': False, 'erro': 'Formato inválido. Envie um arquivo .xlsx ou .xls'}), 400
+
+    cnpj_raiz = request.form.get('cnpj_raiz_operador', '').strip()
+
+    try:
+        uid = str(uuid.uuid4())[:8]
+        nome_seguro = secure_filename(arquivo.filename)
+        caminho_excel = os.path.join(UPLOAD_FOLDER, f"{uid}_{nome_seguro}")
+        arquivo.save(caminho_excel)
+
+        # Auto-converter .xls → .xlsx
+        if ext == '.xls':
+            try:
+                caminho_xlsx = converter_xls_para_xlsx(caminho_excel)
+                os.remove(caminho_excel)
+                caminho_excel = caminho_xlsx
+            except Exception as e:
+                os.remove(caminho_excel)
+                return jsonify({
+                    'sucesso': False,
+                    'erro': f'Erro ao converter .xls: {str(e)}'
+                }), 400
+
+        import openpyxl
+        wb = openpyxl.load_workbook(caminho_excel, read_only=True, data_only=True)
+        ws = wb.active
+
+        # Ler cabeçalhos (primeira linha)
+        cabecalhos = []
+        for cell in ws[1]:
+            val = str(cell.value).strip() if cell.value else ''
+            cabecalhos.append(val.lower())
+
+        # Mapear colunas conhecidas
+        MAPA_COLUNAS = {
+            'nome': ['nome', 'name', 'razao social', 'razão social', 'empresa', 'company'],
+            'logradouro': ['logradouro', 'endereco', 'endereço', 'address', 'rua', 'street'],
+            'numero': ['numero', 'número', 'nro', 'num', 'number', 'no'],
+            'complemento': ['complemento', 'complement', 'comp', 'apto', 'sala'],
+            'codigoPais': ['codigopais', 'codigo pais', 'código país', 'pais', 'país', 'country', 'country code'],
+            'nomeCidade': ['cidade', 'city', 'nomecidade', 'nome cidade', 'municipio', 'município'],
+            'estado': ['estado', 'state', 'uf', 'provincia', 'província', 'province'],
+            'codigoPostal': ['cep', 'codigopostal', 'codigo postal', 'código postal', 'zip', 'zipcode', 'zip code', 'postal code', 'postal'],
+            'telefone': ['telefone', 'phone', 'tel', 'fone', 'telephone'],
+            'email': ['email', 'e-mail', 'mail'],
+            'cpfCnpjRaiz': ['cnpj', 'cpfcnpjraiz', 'cpf cnpj raiz', 'cnpj raiz', 'cpf/cnpj'],
+        }
+
+        mapa = {}  # campo_json -> indice_coluna
+        for campo, aliases in MAPA_COLUNAS.items():
+            for idx, cab in enumerate(cabecalhos):
+                if cab in aliases or cab.replace('_', ' ') in aliases:
+                    mapa[campo] = idx
+                    break
+
+        # Ler linhas de dados
+        operadores = []
+        avisos = []
+        for row_num, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+            if not row or all(v is None or str(v).strip() == '' for v in row):
+                continue
+
+            def get_val(campo):
+                idx = mapa.get(campo)
+                if idx is not None and idx < len(row) and row[idx] is not None:
+                    val = str(row[idx]).strip()
+                    if val.endswith('.0'):
+                        try:
+                            float(val)
+                            val = val[:-2]
+                        except ValueError:
+                            pass
+                    return val
+                return ''
+
+            nome = get_val('nome')
+            if not nome:
+                avisos.append(f'Linha {row_num}: sem nome, ignorada.')
+                continue
+
+            operador = {}
+
+            # cpfCnpjRaiz: da planilha ou do formulário
+            cpf_cnpj = get_val('cpfCnpjRaiz')
+            if not cpf_cnpj and cnpj_raiz:
+                cpf_cnpj = cnpj_raiz
+            if cpf_cnpj:
+                cpf_cnpj = cpf_cnpj.replace('.', '').replace('-', '').replace('/', '').replace(' ', '')
+                operador['cpfCnpjRaiz'] = cpf_cnpj
+
+            operador['nome'] = nome
+
+            # Endereço
+            endereco = {}
+            logradouro = get_val('logradouro')
+            if logradouro:
+                endereco['logradouro'] = logradouro
+            numero = get_val('numero')
+            if numero:
+                endereco['numero'] = numero
+            complemento = get_val('complemento')
+            if complemento:
+                endereco['complemento'] = complemento
+            if endereco:
+                operador['endereco'] = endereco
+
+            # País
+            cod_pais = get_val('codigoPais')
+            if cod_pais:
+                operador['codigoPais'] = cod_pais
+
+            # Cidade
+            cidade = get_val('nomeCidade')
+            if cidade:
+                operador['nomeCidade'] = cidade
+
+            # Estado
+            estado = get_val('estado')
+            if estado:
+                operador['estado'] = estado
+
+            # CEP
+            cep = get_val('codigoPostal')
+            if cep:
+                operador['codigoPostal'] = cep
+
+            # Telefone
+            telefone = get_val('telefone')
+            if telefone:
+                operador['telefone'] = telefone
+
+            # Email
+            email = get_val('email')
+            if email:
+                operador['email'] = email
+
+            operadores.append(operador)
+
+        wb.close()
+        os.remove(caminho_excel)
+
+        if not operadores:
+            return jsonify({
+                'sucesso': False,
+                'erro': 'Nenhum operador encontrado na planilha. Verifique se há uma coluna "nome" com dados.',
+                'avisos': avisos
+            }), 400
+
+        # Salvar JSON para download
+        nome_json = f"{uid}_OPERADORES_ESTRANGEIROS.json"
+        caminho_json = os.path.join(UPLOAD_FOLDER, nome_json)
+        with open(caminho_json, 'w', encoding='utf-8') as f:
+            json.dump(operadores, f, ensure_ascii=False, indent=2)
+
+        # Preview
+        json_preview = json.dumps(operadores[:3], ensure_ascii=False, indent=2)
+        if len(operadores) > 3:
+            json_preview += f"\n\n... e mais {len(operadores) - 3} operador(es)"
+
+        return jsonify({
+            'sucesso': True,
+            'mensagem': f'{len(operadores)} operador(es) convertido(s) com sucesso!',
+            'total': len(operadores),
+            'arquivo_download': nome_json,
+            'preview': json_preview,
+            'json_completo': json.dumps(operadores, ensure_ascii=False, indent=2),
+            'avisos': avisos
+        })
+
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': f'Erro inesperado: {str(e)}'}), 500
+
+
 # ============================================================================
 # INICIALIZAÇÃO
 # ============================================================================

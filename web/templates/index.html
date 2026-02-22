@@ -746,6 +746,9 @@
         <button class="tab-btn" onclick="trocarTab('guia')">
             <span class="tab-icon">📖</span> Guia
         </button>
+        <button class="tab-btn" onclick="trocarTab('operador')">
+            <span class="tab-icon">🏭</span> Operador Estrangeiro
+        </button>
     </div>
 
     <!-- ===== PAINEL: CONVERTER ===== -->
@@ -1132,7 +1135,7 @@
                         </tr>
                         <tr>
                             <td><span class="att-code">ATT_14554</span></td>
-                            <td>Produto Perigoso</td>
+                            <td>Contém Derivado De Animal Ruminante?</td>
                             <td>false</td>
                             <td>Simples</td>
                         </tr>
@@ -1320,6 +1323,152 @@
                 <strong>Produção:</strong> https://portalunico.siscomex.gov.br<br>
                 <strong>Validação:</strong> https://val.portalunico.siscomex.gov.br
             </p>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL: OPERADOR ESTRANGEIRO ===== -->
+    <div id="panel-operador" class="panel">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon blue">🏭</div>
+                <div>
+                    <h3>Cadastro de Operador Estrangeiro</h3>
+                    <p>Converta planilha Excel de operadores estrangeiros (fabricantes/exportadores) para JSON Siscomex</p>
+                </div>
+            </div>
+
+            <form id="form-operador" onsubmit="return false;">
+                <!-- Upload -->
+                <div class="form-group">
+                    <label>Arquivo Excel (.xlsx ou .xls)</label>
+                    <div class="upload-area" id="upload-operador">
+                        <input type="file" id="file-operador" accept=".xlsx,.xls" onchange="onFileSelected(this, 'upload-operador')">
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Clique ou arraste o arquivo aqui</div>
+                        <div class="upload-hint">Planilha com dados dos operadores estrangeiros</div>
+                        <div class="file-name" id="fname-operador"></div>
+                    </div>
+                </div>
+
+                <!-- CNPJ Raiz -->
+                <div class="form-group">
+                    <label>🏢 CNPJ Raiz (8 dígitos) — <small style="font-weight:400;color:var(--text-light)">se não houver coluna na planilha</small></label>
+                    <input type="text" id="cnpj-raiz-operador" placeholder="Ex: 25940099" maxlength="14"
+                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Somente os 8 primeiros dígitos do CNPJ. Usado quando a planilha não tem coluna cpfCnpjRaiz/CNPJ.</p>
+                </div>
+
+                <button type="button" class="btn-primary" id="btn-converter-operador" onclick="converterOperador()">
+                    🏭 Converter Operadores
+                </button>
+            </form>
+
+            <!-- Resultado -->
+            <div id="resultado-operador" class="resultado-section">
+                <div id="res-header-operador" class="resultado-header">
+                    <span id="res-icon-operador" class="resultado-icon"></span>
+                    <div>
+                        <h3 id="res-titulo-operador"></h3>
+                        <p id="res-subtitulo-operador"></p>
+                    </div>
+                </div>
+
+                <div class="resultado-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-operador">0</div>
+                        <div class="stat-label">Operadores</div>
+                    </div>
+                </div>
+
+                <div id="mensagens-operador"></div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;">
+                    <a id="btn-download-operador" class="btn-primary" href="#" download
+                       style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                        ⬇️ Baixar JSON
+                    </a>
+                    <button class="btn-secondary" onclick="copiarJsonOperador()">
+                        📋 Copiar JSON
+                    </button>
+                </div>
+
+                <div class="json-preview">
+                    <pre><code id="json-code-operador"></code></pre>
+                </div>
+            </div>
+
+            <!-- Guia de colunas -->
+            <div style="margin-top: 24px; padding: 20px; background: var(--bg-content); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <h4 style="margin-bottom: 12px;">📋 Colunas aceitas na planilha</h4>
+                <p class="hint" style="margin-bottom: 12px;">O sistema identifica automaticamente as colunas pelo cabeçalho. Use qualquer um dos nomes abaixo:</p>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                    <thead>
+                        <tr style="background:var(--primary);color:white;">
+                            <th style="padding:8px;text-align:left;">Campo JSON</th>
+                            <th style="padding:8px;text-align:left;">Nomes aceitos na planilha</th>
+                            <th style="padding:8px;text-align:left;">Obrigatório</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>nome</strong></td>
+                            <td style="padding:8px;">nome, name, razão social, empresa, company</td>
+                            <td style="padding:8px;">✅ Sim</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>logradouro</strong></td>
+                            <td style="padding:8px;">logradouro, endereço, address, rua, street</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>numero</strong></td>
+                            <td style="padding:8px;">numero, número, nro, num, number</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>complemento</strong></td>
+                            <td style="padding:8px;">complemento, comp, apto, sala</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>codigoPais</strong></td>
+                            <td style="padding:8px;">codigoPais, pais, país, country</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>nomeCidade</strong></td>
+                            <td style="padding:8px;">cidade, city, nomeCidade, municipio</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>estado</strong></td>
+                            <td style="padding:8px;">estado, state, uf, provincia, province</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>codigoPostal</strong></td>
+                            <td style="padding:8px;">cep, codigoPostal, codigo postal, zip, postal code</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>telefone</strong></td>
+                            <td style="padding:8px;">telefone, phone, tel, fone</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>email</strong></td>
+                            <td style="padding:8px;">email, e-mail, mail</td>
+                            <td style="padding:8px;">❌ Não</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;"><strong>cpfCnpjRaiz</strong></td>
+                            <td style="padding:8px;">cnpj, cpfCnpjRaiz, cnpj raiz</td>
+                            <td style="padding:8px;">⚠️ Pelo campo acima ou na planilha</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -1558,6 +1707,79 @@
             document.execCommand('copy');
             document.body.removeChild(ta);
             toast('JSON copiado!', 'success');
+        });
+    }
+
+    // ===== CONVERTER OPERADOR ESTRANGEIRO =====
+    let jsonCompletoOperador = '';
+
+    async function converterOperador() {
+        const fileInput = document.getElementById('file-operador');
+        if (!fileInput.files.length) {
+            toast('Selecione um arquivo Excel primeiro!', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('btn-converter-operador');
+        const resultado = document.getElementById('resultado-operador');
+
+        btn.classList.add('loading');
+        btn.disabled = true;
+        resultado.classList.remove('show');
+
+        const formData = new FormData();
+        formData.append('arquivo', fileInput.files[0]);
+
+        const cnpjRaiz = document.getElementById('cnpj-raiz-operador').value.trim();
+        if (cnpjRaiz) formData.append('cnpj_raiz_operador', cnpjRaiz);
+
+        try {
+            const res = await fetch('/converter-operador', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.sucesso) {
+                document.getElementById('res-header-operador').className = 'resultado-header sucesso';
+                document.getElementById('res-icon-operador').textContent = '✅';
+                document.getElementById('res-titulo-operador').textContent = data.mensagem;
+                document.getElementById('res-subtitulo-operador').textContent = 'Pronto para download';
+                document.getElementById('stat-total-operador').textContent = data.total;
+                document.getElementById('btn-download-operador').href = '/download/' + data.arquivo_download;
+                document.getElementById('json-code-operador').textContent = data.preview;
+                jsonCompletoOperador = data.json_completo;
+
+                renderMensagens('mensagens-operador', [], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast('Operadores convertidos com sucesso!', 'success');
+            } else {
+                document.getElementById('res-header-operador').className = 'resultado-header erro';
+                document.getElementById('res-icon-operador').textContent = '❌';
+                document.getElementById('res-titulo-operador').textContent = 'Erro na conversão';
+                document.getElementById('res-subtitulo-operador').textContent = data.erro || 'Verifique a planilha';
+                document.getElementById('stat-total-operador').textContent = '0';
+
+                renderMensagens('mensagens-operador', data.erros || [data.erro], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast(data.erro || 'Erro na conversão', 'error');
+            }
+        } catch (err) {
+            toast('Erro de conexão: ' + err.message, 'error');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    function copiarJsonOperador() {
+        if (!jsonCompletoOperador) {
+            toast('Nenhum JSON para copiar!', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(jsonCompletoOperador).then(() => {
+            toast('JSON copiado! Cole no portal ou editor.', 'success');
         });
     }
 
