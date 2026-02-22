@@ -749,6 +749,9 @@
         <button class="tab-btn" onclick="trocarTab('operador')">
             <span class="tab-icon">🏭</span> Operador Estrangeiro
         </button>
+        <button class="tab-btn" onclick="trocarTab('vincular')">
+            <span class="tab-icon">🔗</span> Vincular Operador
+        </button>
     </div>
 
     <!-- ===== PAINEL: CONVERTER ===== -->
@@ -1472,6 +1475,115 @@
         </div>
     </div>
 
+    <!-- ===== PAINEL: VINCULAR OPERADOR AO PRODUTO ===== -->
+    <div id="panel-vincular" class="panel">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon blue">🔗</div>
+                <div>
+                    <h3>Vincular Operador Estrangeiro ao Produto</h3>
+                    <p>Gere o JSON para vincular códigos de operadores estrangeiros aos produtos do catálogo</p>
+                </div>
+            </div>
+
+            <form id="form-vincular" onsubmit="return false;">
+                <!-- Upload Excel -->
+                <div class="form-group">
+                    <label>Arquivo Excel (.xlsx ou .xls) com produto × operador</label>
+                    <div class="upload-area" id="upload-vincular">
+                        <input type="file" id="file-vincular" accept=".xlsx,.xls" onchange="onFileSelected(this, 'upload-vincular')">
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Clique ou arraste o arquivo aqui</div>
+                        <div class="upload-hint">Planilha com código do produto e código do operador estrangeiro</div>
+                        <div class="file-name" id="fname-vincular"></div>
+                    </div>
+                </div>
+
+                <!-- CNPJ Raiz -->
+                <div class="form-group">
+                    <label>🏢 CNPJ Raiz (8 dígitos) — <small style="font-weight:400;color:var(--text-light)">obrigatório</small></label>
+                    <input type="text" id="cnpj-raiz-vincular" placeholder="Ex: 25940099" maxlength="14"
+                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Somente os 8 primeiros dígitos do CNPJ. Necessário para o campo cpfCnpjRaiz do JSON.</p>
+                </div>
+
+                <button type="button" class="btn-primary" id="btn-vincular" onclick="vincularOperador()">
+                    🔗 Gerar JSON de Vinculação
+                </button>
+            </form>
+
+            <!-- Resultado -->
+            <div id="resultado-vincular" class="resultado-section">
+                <div id="res-header-vincular" class="resultado-header">
+                    <span id="res-icon-vincular" class="resultado-icon"></span>
+                    <div>
+                        <h3 id="res-titulo-vincular"></h3>
+                        <p id="res-subtitulo-vincular"></p>
+                    </div>
+                </div>
+
+                <div class="resultado-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total-vincular">0</div>
+                        <div class="stat-label">Produtos vinculados</div>
+                    </div>
+                </div>
+
+                <div id="mensagens-vincular"></div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;">
+                    <a id="btn-download-vincular" class="btn-primary" href="#" download
+                       style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                        ⬇️ Baixar JSON
+                    </a>
+                    <button class="btn-secondary" onclick="copiarJsonVincular()">
+                        📋 Copiar JSON
+                    </button>
+                </div>
+
+                <div class="json-preview">
+                    <pre><code id="json-code-vincular"></code></pre>
+                </div>
+            </div>
+
+            <!-- Guia de colunas -->
+            <div style="margin-top: 24px; padding: 20px; background: var(--bg-content); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <h4 style="margin-bottom: 12px;">📋 Como montar a planilha</h4>
+                <p class="hint" style="margin-bottom: 12px;">A planilha deve ter pelo menos 2 colunas. O sistema identifica automaticamente pelos nomes do cabeçalho:</p>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                    <thead>
+                        <tr style="background:var(--primary);color:white;">
+                            <th style="padding:8px;text-align:left;">Coluna</th>
+                            <th style="padding:8px;text-align:left;">Nomes aceitos</th>
+                            <th style="padding:8px;text-align:left;">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:8px;"><strong>codigo</strong></td>
+                            <td style="padding:8px;">codigo, código, code, produto, cod, codigo produto</td>
+                            <td style="padding:8px;">✅ Código do produto no catálogo (número retornado pelo Siscomex)</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);background:var(--bg-main);">
+                            <td style="padding:8px;"><strong>codigoOperadorEstrangeiro</strong></td>
+                            <td style="padding:8px;">codigoOperadorEstrangeiro, operador, codigo operador, operador estrangeiro</td>
+                            <td style="padding:8px;">✅ Código do operador estrangeiro cadastrado no Siscomex</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="hint" style="margin-top:12px;">
+                    <strong>Como funciona:</strong> O sistema gera um JSON no formato PUT do portal. Cada linha da planilha gera um produto 
+                    com o campo <code>codigoOperadorEstrangeiro</code> preenchido. Use o JSON gerado para fazer upload no portal (modo PUT) 
+                    ou via API <code>PUT /ext/produto/{'{'}cpfCnpjRaiz{'}'}/{'{'}codigo{'}'}</code>.
+                </p>
+                <p class="hint" style="margin-top:8px; color: #e67e22;">
+                    ⚠️ <strong>Importante:</strong> O JSON gerado contém apenas os campos de vinculação. Para enviar via portal, é necessário usar junto com os dados completos do produto (denominacao, descricao, NCM, atributos, etc.).
+                </p>
+            </div>
+        </div>
+    </div>
+
 </main>
 
 <!-- Footer -->
@@ -1779,6 +1891,79 @@
             return;
         }
         navigator.clipboard.writeText(jsonCompletoOperador).then(() => {
+            toast('JSON copiado! Cole no portal ou editor.', 'success');
+        });
+    }
+
+    // ===== VINCULAR OPERADOR AO PRODUTO =====
+    let jsonCompletoVincular = '';
+
+    async function vincularOperador() {
+        const fileInput = document.getElementById('file-vincular');
+        if (!fileInput.files.length) {
+            toast('Selecione um arquivo Excel primeiro!', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('btn-vincular');
+        const resultado = document.getElementById('resultado-vincular');
+
+        btn.classList.add('loading');
+        btn.disabled = true;
+        resultado.classList.remove('show');
+
+        const formData = new FormData();
+        formData.append('arquivo', fileInput.files[0]);
+
+        const cnpjRaiz = document.getElementById('cnpj-raiz-vincular').value.trim();
+        if (cnpjRaiz) formData.append('cnpj_raiz_vincular', cnpjRaiz);
+
+        try {
+            const res = await fetch('/vincular-operador', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.sucesso) {
+                document.getElementById('res-header-vincular').className = 'resultado-header sucesso';
+                document.getElementById('res-icon-vincular').textContent = '✅';
+                document.getElementById('res-titulo-vincular').textContent = data.mensagem;
+                document.getElementById('res-subtitulo-vincular').textContent = 'Pronto para download';
+                document.getElementById('stat-total-vincular').textContent = data.total;
+                document.getElementById('btn-download-vincular').href = '/download/' + data.arquivo_download;
+                document.getElementById('json-code-vincular').textContent = data.preview;
+                jsonCompletoVincular = data.json_completo;
+
+                renderMensagens('mensagens-vincular', [], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast('Vínculos gerados com sucesso!', 'success');
+            } else {
+                document.getElementById('res-header-vincular').className = 'resultado-header erro';
+                document.getElementById('res-icon-vincular').textContent = '❌';
+                document.getElementById('res-titulo-vincular').textContent = 'Erro na conversão';
+                document.getElementById('res-subtitulo-vincular').textContent = data.erro || 'Verifique a planilha';
+                document.getElementById('stat-total-vincular').textContent = '0';
+
+                renderMensagens('mensagens-vincular', data.erros || [data.erro], data.avisos || []);
+
+                resultado.classList.add('show');
+                resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                toast(data.erro || 'Erro na conversão', 'error');
+            }
+        } catch (err) {
+            toast('Erro de conexão: ' + err.message, 'error');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    function copiarJsonVincular() {
+        if (!jsonCompletoVincular) {
+            toast('Nenhum JSON para copiar!', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(jsonCompletoVincular).then(() => {
             toast('JSON copiado! Cole no portal ou editor.', 'success');
         });
     }
