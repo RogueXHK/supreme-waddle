@@ -807,31 +807,31 @@
                     <label>Modo de conversão</label>
                     <div class="modo-options">
                         <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-post" value="post" checked>
+                            <input type="radio" name="modo" id="modo-completo" value="completo" checked>
+                            <label for="modo-completo">
+                                <span class="modo-title">📦 Completo</span>
+                                <span class="modo-desc">Com seq/codigo/versao (padrão portal)</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-post" value="post">
                             <label for="modo-post">
                                 <span class="modo-title">🆕 POST (Criar)</span>
-                                <span class="modo-desc">Novos produtos na API</span>
+                                <span class="modo-desc">Sem seq/codigo (inclusão API)</span>
                             </label>
                         </div>
                         <div class="modo-option">
                             <input type="radio" name="modo" id="modo-put" value="put">
                             <label for="modo-put">
                                 <span class="modo-title">✏️ PUT (Atualizar)</span>
-                                <span class="modo-desc">Atualizar existentes</span>
-                            </label>
-                        </div>
-                        <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-completo" value="completo">
-                            <label for="modo-completo">
-                                <span class="modo-title">📦 Completo</span>
-                                <span class="modo-desc">Formato exportação</span>
+                                <span class="modo-desc">Com codigo (atualização API)</span>
                             </label>
                         </div>
                     </div>
                     <p class="hint">
-                        <strong>POST:</strong> Sem seq/codigo/versao (inclusão) &nbsp;|&nbsp;
-                        <strong>PUT:</strong> Com codigo (atualização) &nbsp;|&nbsp;
-                        <strong>Completo:</strong> Igual ao portal
+                        <strong>Completo:</strong> Com seq/codigo/versao, igual ao portal (recomendado) &nbsp;|&nbsp;
+                        <strong>POST:</strong> Sem seq/codigo/versao (inclusão via API) &nbsp;|&nbsp;
+                        <strong>PUT:</strong> Com codigo (atualização via API)
                     </p>
                 </div>
 

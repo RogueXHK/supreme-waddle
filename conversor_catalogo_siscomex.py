@@ -650,20 +650,25 @@ class ConversorCatalogoSiscomex:
     def gerar_json_completo(self, produtos: list) -> list:
         """
         Gera JSON no formato completo de exportação (como o portal exporta),
-        incluindo seq, codigo, versao. Útil para backup/referência.
+        incluindo seq, codigo, versao. Ordem dos campos idêntica ao portal.
         """
         resultado = []
         for seq, produto in enumerate(produtos, 1):
             item = {}
+            # Ordem exata do portal: seq, codigo, descricao, denominacao, 
+            # cpfCnpjRaiz, situacao, modalidade, ncm, versao, atributos,
+            # atributosMultivalorados, atributosCompostos, 
+            # atributosCompostosMultivalorados, codigosInterno
             item["seq"] = seq
-            item["codigo"] = produto.get("codigo", seq)
-            if isinstance(item["codigo"], str) and item["codigo"].strip() == "":
-                item["codigo"] = seq
-            else:
-                try:
-                    item["codigo"] = int(item["codigo"])
-                except (ValueError, TypeError):
-                    item["codigo"] = seq
+
+            codigo = produto.get("codigo", seq)
+            if isinstance(codigo, str) and codigo.strip() == "":
+                codigo = seq
+            try:
+                codigo = int(codigo)
+            except (ValueError, TypeError):
+                codigo = seq
+            item["codigo"] = codigo
 
             item["descricao"] = produto.get("descricao", "")
             item["denominacao"] = produto.get("denominacao", "")
@@ -672,7 +677,6 @@ class ConversorCatalogoSiscomex:
             item["modalidade"] = produto.get("modalidade", "")
             item["ncm"] = produto.get("ncm", "")
             item["versao"] = produto.get("versao", "1")
-
             item["atributos"] = produto.get("atributos", [])
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
