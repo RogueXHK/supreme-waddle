@@ -676,7 +676,10 @@ class ConversorCatalogoSiscomex:
             item["situacao"] = produto.get("situacao", "Ativado")
             item["modalidade"] = produto.get("modalidade", "")
             item["ncm"] = produto.get("ncm", "")
-            item["versao"] = produto.get("versao", "1")
+            # versao: só incluir se veio da planilha/JSON original (campo do servidor)
+            versao = produto.get("versao")
+            if versao and str(versao).strip():
+                item["versao"] = str(versao).strip()
             item["atributos"] = produto.get("atributos", [])
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
