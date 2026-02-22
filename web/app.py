@@ -648,7 +648,7 @@ def vincular_operador():
                 'codigoProduto': codigo_int,
                 'codigoPais': codigo_pais,
                 'codigoOperadorEstrangeiro': operador,
-                'fabricanteConhecido': True,
+                'conhecido': True,
                 'vincular': True
             }
             if cnpj_raiz:
