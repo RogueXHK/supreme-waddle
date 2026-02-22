@@ -807,45 +807,45 @@
                     <label>Modo de conversão</label>
                     <div class="modo-options">
                         <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-api-post" value="api_post" checked>
+                            <input type="radio" name="modo" id="modo-post" value="post" checked>
+                            <label for="modo-post">
+                                <span class="modo-title">📊 Importar (POST)</span>
+                                <span class="modo-desc">⭐ Upload de arquivo no portal — incluir novos produtos</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-put" value="put">
+                            <label for="modo-put">
+                                <span class="modo-title">📊 Importar (PUT)</span>
+                                <span class="modo-desc">Upload de arquivo no portal — atualizar produtos existentes</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-api-post" value="api_post">
                             <label for="modo-api-post">
                                 <span class="modo-title">📡 API POST</span>
-                                <span class="modo-desc">Incluir produto (novo endpoint)</span>
+                                <span class="modo-desc">Chamada REST direta — cpfCnpjRaiz na URL</span>
                             </label>
                         </div>
                         <div class="modo-option">
                             <input type="radio" name="modo" id="modo-api-put" value="api_put">
                             <label for="modo-api-put">
                                 <span class="modo-title">📡 API PUT</span>
-                                <span class="modo-desc">Nova versão / retificação</span>
-                            </label>
-                        </div>
-                        <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-post" value="post">
-                            <label for="modo-post">
-                                <span class="modo-title">📊 Lote POST</span>
-                                <span class="modo-desc">Upload lote no portal (com seq)</span>
-                            </label>
-                        </div>
-                        <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-put" value="put">
-                            <label for="modo-put">
-                                <span class="modo-title">📊 Lote PUT</span>
-                                <span class="modo-desc">Atualização lote no portal</span>
+                                <span class="modo-desc">Chamada REST direta — nova versão / retificação</span>
                             </label>
                         </div>
                         <div class="modo-option">
                             <input type="radio" name="modo" id="modo-completo" value="completo">
                             <label for="modo-completo">
                                 <span class="modo-title">📦 Completo</span>
-                                <span class="modo-desc">Formato exportação do portal</span>
+                                <span class="modo-desc">Formato idêntico ao exportado pelo portal</span>
                             </label>
                         </div>
                     </div>
                     <p class="hint">
-                        <strong>API POST/PUT:</strong> ProdutoIntegracaoRequestDTO (novos endpoints, cpfCnpjRaiz na URL) &nbsp;|&nbsp;
-                        <strong>Lote:</strong> ProdutoIntegracaoDTO com seq (upload portal, depreciado) &nbsp;|&nbsp;
-                        <strong>Completo:</strong> Formato idêntico ao exportado pelo portal
+                        <strong>📊 Importar:</strong> Para upload de arquivo JSON no portal do Siscomex (inclui seq e cpfCnpjRaiz) &nbsp;|&nbsp;
+                        <strong>📡 API:</strong> Para chamadas REST diretas (cpfCnpjRaiz vai na URL) &nbsp;|&nbsp;
+                        <strong>📦 Completo:</strong> Formato de exportação do portal
                     </p>
                 </div>
 

@@ -114,7 +114,7 @@ def converter():
             return jsonify({'sucesso': False, 'erro': 'O formato antigo .xls não é suportado. Abra o arquivo no Excel e salve como .xlsx (Pasta de Trabalho do Excel).'}), 400
         return jsonify({'sucesso': False, 'erro': 'Formato inválido. Envie um arquivo .xlsx'}), 400
 
-    modo = request.form.get('modo', 'api_post')
+    modo = request.form.get('modo', 'post')
     if modo not in ['post', 'put', 'api_post', 'api_put', 'completo']:
         return jsonify({'sucesso': False, 'erro': 'Modo inválido.'}), 400
 
