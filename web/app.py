@@ -114,8 +114,8 @@ def converter():
             return jsonify({'sucesso': False, 'erro': 'O formato antigo .xls não é suportado. Abra o arquivo no Excel e salve como .xlsx (Pasta de Trabalho do Excel).'}), 400
         return jsonify({'sucesso': False, 'erro': 'Formato inválido. Envie um arquivo .xlsx'}), 400
 
-    modo = request.form.get('modo', 'completo')
-    if modo not in ['post', 'put', 'completo']:
+    modo = request.form.get('modo', 'api_post')
+    if modo not in ['post', 'put', 'api_post', 'api_put', 'completo']:
         return jsonify({'sucesso': False, 'erro': 'Modo inválido.'}), 400
 
     # Valores padrão para colunas que podem não existir na planilha
@@ -179,6 +179,10 @@ def converter():
             json_data = conversor.gerar_json_post(produtos)
         elif modo == 'put':
             json_data = conversor.gerar_json_put(produtos)
+        elif modo == 'api_post':
+            json_data = conversor.gerar_json_api_post(produtos)
+        elif modo == 'api_put':
+            json_data = conversor.gerar_json_api_put(produtos)
         else:
             json_data = conversor.gerar_json_completo(produtos)
 

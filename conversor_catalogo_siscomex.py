@@ -3,20 +3,24 @@
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  CONVERSOR EXCEL → JSON - CATÁLOGO DE PRODUTOS SISCOMEX (CATP API)        ║
 ║  Portal Único Siscomex - Portal Único de Comércio Exterior                 ║
-║  Endpoint: POST /catp/api/ext/produto                                      ║
-║  Versão: 1.0                                                               ║
+║  Versão: 2.0                                                               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 Converte planilha Excel (.xlsx) para JSON compatível com a API do Catálogo de
 Produtos do Portal Único Siscomex (CATP).
 
-Estrutura JSON gerada segue 100% o padrão da API:
-- POST para inclusão (sem campos read-only: seq, codigo, versao)
-- PUT para atualização (inclui codigo no body)
-- Exportação completa (inclui todos os campos como no portal)
+Suporta dois schemas da API:
+- ProdutoIntegracaoRequestDTO (novos endpoints): POST /ext/produto/{cpfCnpjRaiz}
+- ProdutoIntegracaoDTO (endpoint depreciado): POST /ext/produto (lote com seq)
 
-Autor: Gerado automaticamente
-Data: 2026-02-20
+Formatos de saída:
+- api_post:  Inclusão via API (ProdutoIntegracaoRequestDTO, sem seq/cpfCnpjRaiz/situacao)
+- api_put:   Atualização via API (ProdutoIntegracaoRequestDTO, sem seq/cpfCnpjRaiz/situacao)
+- post:      Upload em lote no portal (ProdutoIntegracaoDTO, com seq)
+- put:       Atualização em lote no portal (ProdutoIntegracaoDTO, com seq e codigo)
+- completo:  Exportação completa (formato idêntico ao exportado pelo portal)
+
+Genérico: funciona para qualquer empresa (CNPJ configurável).
 """
 
 import json
@@ -65,7 +69,10 @@ MAX_CPF_CNPJ_RAIZ = 14  # CNPJ raiz = 8, CPF = 11, mas campo aceita até 14
 # Campos read-only (gerados pelo servidor, NÃO enviar no POST)
 CAMPOS_READ_ONLY = ["seq", "versao"]
 
-# Campos obrigatórios para criação (POST)
+# Campos obrigatórios para criação via API nova (cpfCnpjRaiz vai na URL)
+CAMPOS_OBRIGATORIOS_API = ["descricao", "denominacao", "ncm", "modalidade"]
+
+# Campos obrigatórios para criação via upload em lote (portal, endpoint depreciado)
 CAMPOS_OBRIGATORIOS_POST = ["descricao", "denominacao", "ncm", "cpfCnpjRaiz", "modalidade"]
 
 # Campos obrigatórios para atualização (PUT)
@@ -669,6 +676,68 @@ class ConversorCatalogoSiscomex:
 
         return resultado
 
+    def gerar_json_api_post(self, produtos: list) -> list:
+        """
+        Gera JSON para POST via API nova: POST /ext/produto/{cpfCnpjRaiz}
+        Usa o schema ProdutoIntegracaoRequestDTO.
+        NÃO inclui: seq, cpfCnpjRaiz, situacao, codigo, versao (cpfCnpjRaiz vai na URL).
+        """
+        resultado = []
+        for produto in produtos:
+            item = {}
+            item["descricao"] = produto.get("descricao", "")
+            item["denominacao"] = produto.get("denominacao", "")
+            item["modalidade"] = produto.get("modalidade", "")
+            item["ncm"] = produto.get("ncm", "")
+
+            # Atributos
+            item["atributos"] = produto.get("atributos", [])
+            item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
+            item["atributosCompostos"] = produto.get("atributosCompostos", [])
+            item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+
+            # Códigos internos
+            item["codigosInterno"] = produto.get("codigosInterno", [])
+
+            resultado.append(item)
+
+        return resultado
+
+    def gerar_json_api_put(self, produtos: list) -> list:
+        """
+        Gera JSON para PUT via API nova:
+        - Nova versão: PUT /ext/produto/{cpfCnpjRaiz}/{codigo}
+        - Retificação: PUT /ext/produto/{cpfCnpjRaiz}/{codigo}/{versao}
+        Usa o schema ProdutoIntegracaoRequestDTO (mesmo do POST).
+        NÃO inclui: seq, cpfCnpjRaiz, situacao, codigo, versao no body
+        (codigo e versao vão na URL).
+        """
+        resultado = []
+        for produto in produtos:
+            codigo = produto.get("codigo")
+            if not codigo or str(codigo).strip() == "":
+                self.avisos.append(
+                    f"Produto '{produto.get('denominacao', '?')}': sem 'codigo', "
+                    f"será gerado como inclusão (POST). Para atualizar via API, "
+                    f"use PUT /ext/produto/{{cpfCnpjRaiz}}/{{codigo}} com o código na URL."
+                )
+
+            item = {}
+            item["descricao"] = produto.get("descricao", "")
+            item["denominacao"] = produto.get("denominacao", "")
+            item["modalidade"] = produto.get("modalidade", "")
+            item["ncm"] = produto.get("ncm", "")
+
+            item["atributos"] = produto.get("atributos", [])
+            item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
+            item["atributosCompostos"] = produto.get("atributosCompostos", [])
+            item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+            item["codigosInterno"] = produto.get("codigosInterno", [])
+
+            resultado.append(item)
+
+        return resultado
+
     def gerar_json_completo(self, produtos: list) -> list:
         """
         Gera JSON no formato completo de exportação (como o portal exporta),
@@ -792,9 +861,9 @@ class ConversorCatalogoSiscomex:
         descricoes_row = 2
         descricoes = {
             "codigo": "Código do produto\n(vazio p/ novo,\npreencher p/ atualizar)",
-            "denominacao": "Nome do produto\n(OBRIGATÓRIO)\nMáx 200 caracteres",
+            "denominacao": "Nome do produto\n(OBRIGATÓRIO)\nMáx 120 caracteres",
             "descricao": "Descrição detalhada\n(OBRIGATÓRIO)\nMáx 2000 caracteres",
-            "cpfCnpjRaiz": "CNPJ raiz 8 dígitos\n(OBRIGATÓRIO)\nSó números",
+            "cpfCnpjRaiz": "Seu CNPJ raiz 8 dígitos\n(OBRIGATÓRIO)\nSó números",
             "situacao": "Ativado ou Desativado\n(padrão: Ativado)",
             "modalidade": "IMPORTACAO ou\nEXPORTACAO\n(OBRIGATÓRIO)",
             "ncm": "Código NCM 8 dígitos\n(OBRIGATÓRIO)\nSó números",
@@ -823,7 +892,7 @@ class ConversorCatalogoSiscomex:
             "codigo": "",
             "denominacao": "ARCO NITI 12 (M) INF/SUP 10UN",
             "descricao": "Indicado Para Tratamentos Ortodônticos...",
-            "cpfCnpjRaiz": "25940099",
+            "cpfCnpjRaiz": "12345678",
             "situacao": "Ativado",
             "modalidade": "IMPORTACAO",
             "ncm": "90211010",
@@ -920,9 +989,11 @@ class ConversorCatalogoSiscomex:
             [f"  • ATT_15121 - {ATRIBUTOS_LABELS.get('ATT_15121', '')}"],
             [""],
             ["FORMATOS DE SAÍDA JSON:"],
-            ["  1. POST (criar): Gera JSON sem campos seq/codigo/versao (para inclusão via API)"],
-            ["  2. PUT (atualizar): Gera JSON com codigo (para atualização via API)"],
-            ["  3. Completo: Gera JSON igual ao exportado pelo portal (com seq/codigo/versao)"],
+            ["  1. API POST (incluir): Gera JSON ProdutoIntegracaoRequestDTO (sem seq/cpfCnpjRaiz/situacao)"],
+            ["  2. API PUT (atualizar): Gera JSON ProdutoIntegracaoRequestDTO (para PUT /{cpfCnpjRaiz}/{codigo})"],
+            ["  3. POST Lote (upload portal): Gera JSON ProdutoIntegracaoDTO com seq (endpoint depreciado)"],
+            ["  4. PUT Lote (upload portal): Gera JSON ProdutoIntegracaoDTO com seq e codigo"],
+            ["  5. Completo: Gera JSON igual ao exportado pelo portal (com seq/codigo/versao)"],
             [""],
             ["NOTAS:"],
             ["  • A linha 2 da aba PRODUTOS contém descrições dos campos (NÃO preencher)"],
@@ -1127,11 +1198,17 @@ class ConversorCatalogoSiscomex:
         elif modo == "put":
             json_data = self.gerar_json_put(produtos)
             sufixo = "_PUT"
+        elif modo == "api_post":
+            json_data = self.gerar_json_api_post(produtos)
+            sufixo = "_API_POST"
+        elif modo == "api_put":
+            json_data = self.gerar_json_api_put(produtos)
+            sufixo = "_API_PUT"
         elif modo == "completo":
             json_data = self.gerar_json_completo(produtos)
             sufixo = "_COMPLETO"
         else:
-            print(f"\n❌ Modo '{modo}' inválido. Use: post, put ou completo")
+            print(f"\n❌ Modo '{modo}' inválido. Use: post, put, api_post, api_put ou completo")
             return None
 
         # Verificar avisos pós-geração
@@ -1174,12 +1251,19 @@ def exibir_menu():
     print()
     print("  Escolha uma opção:")
     print()
-    print("  [1] 📊 Excel → JSON (POST - criar novos produtos)")
-    print("  [2] 📊 Excel → JSON (PUT - atualizar produtos existentes)")
-    print("  [3] 📊 Excel → JSON (Completo - formato exportação do portal)")
-    print("  [4] 📝 Gerar planilha modelo (.xlsx)")
-    print("  [5] 📥 JSON → Excel (importar JSON do portal para planilha)")
-    print("  [6] ✅ Validar planilha (sem gerar JSON)")
+    print("  === API NOVA (ProdutoIntegracaoRequestDTO) ===")
+    print("  [1] 📡 Excel → JSON (API POST - incluir produto)")
+    print("  [2] 📡 Excel → JSON (API PUT - nova versão/retificação)")
+    print()
+    print("  === UPLOAD EM LOTE NO PORTAL (ProdutoIntegracaoDTO) ===")
+    print("  [3] 📊 Excel → JSON (POST lote - criar novos produtos)")
+    print("  [4] 📊 Excel → JSON (PUT lote - atualizar produtos)")
+    print()
+    print("  === UTILITÁRIOS ===")
+    print("  [5] 📊 Excel → JSON (Completo - formato exportação do portal)")
+    print("  [6] 📝 Gerar planilha modelo (.xlsx)")
+    print("  [7] 📥 JSON → Excel (importar JSON do portal para planilha)")
+    print("  [8] ✅ Validar planilha (sem gerar JSON)")
     print("  [0] ❌ Sair")
     print()
     return input("  Opção: ").strip()
@@ -1221,9 +1305,9 @@ def main():
         parser.add_argument("arquivo", help="Caminho do arquivo Excel (.xlsx)")
         parser.add_argument(
             "-m", "--modo",
-            choices=["post", "put", "completo"],
-            default="post",
-            help="Modo de geração: post (padrão), put ou completo"
+            choices=["post", "put", "api_post", "api_put", "completo"],
+            default="api_post",
+            help="Modo de geração: api_post (padrão), api_put, post (lote), put (lote) ou completo"
         )
         parser.add_argument(
             "-o", "--output",
@@ -1263,8 +1347,14 @@ def main():
             print("\n  👋 Até logo!")
             break
 
-        elif opcao in ["1", "2", "3"]:
-            modos = {"1": "post", "2": "put", "3": "completo"}
+        elif opcao in ["1", "2", "3", "4", "5"]:
+            modos = {
+                "1": "api_post",
+                "2": "api_put",
+                "3": "post",
+                "4": "put",
+                "5": "completo"
+            }
             modo = modos[opcao]
 
             caminho_excel = solicitar_caminho(
@@ -1277,21 +1367,27 @@ def main():
 
             if resultado:
                 print(f"\n  ✅ Arquivo JSON pronto para uso na API!")
-                if modo == "post":
-                    print(f"  📡 Endpoint: POST /catp/api/ext/produto")
-                elif modo == "put":
+                if modo == "api_post":
+                    print(f"  📡 Endpoint: POST /catp/api/ext/produto/{{cpfCnpjRaiz}}")
+                    print(f"  ℹ️  cpfCnpjRaiz vai na URL, NÃO no body do JSON")
+                elif modo == "api_put":
                     print(f"  📡 Endpoint: PUT /catp/api/ext/produto/{{cpfCnpjRaiz}}/{{codigo}}")
+                    print(f"  ℹ️  cpfCnpjRaiz e codigo vão na URL, NÃO no body do JSON")
+                elif modo == "post":
+                    print(f"  📡 Endpoint: POST /catp/api/ext/produto (lote/upload portal)")
+                elif modo == "put":
+                    print(f"  📡 Endpoint: POST /catp/api/ext/produto (lote/upload portal)")
 
-        elif opcao == "4":
+        elif opcao == "6":
             caminho_saida = solicitar_caminho(
                 "Caminho para salvar a planilha modelo (.xlsx)",
                 extensao=".xlsx",
                 deve_existir=False
             )
             conversor.gerar_planilha_modelo(caminho_saida)
-            print(f"\n  ✅ Planilha modelo criada! Preencha e use opção 1, 2 ou 3.")
+            print(f"\n  ✅ Planilha modelo criada! Preencha e use opção 1-5.")
 
-        elif opcao == "5":
+        elif opcao == "7":
             caminho_json = solicitar_caminho(
                 "Caminho do arquivo JSON exportado do portal",
                 extensao=".json",
@@ -1304,7 +1400,7 @@ def main():
             )
             conversor.json_para_planilha(caminho_json, caminho_excel)
 
-        elif opcao == "6":
+        elif opcao == "8":
             caminho_excel = solicitar_caminho(
                 "Caminho da planilha Excel (.xlsx)",
                 extensao=".xlsx",

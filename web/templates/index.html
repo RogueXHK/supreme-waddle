@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ortodente | Catálogo Siscomex - Conversor CATP</title>
+    <title>Conversor CATP | Catálogo de Produtos Siscomex</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦷</text></svg>">
     <style>
         /* ===== RESET & BASE ===== */
@@ -715,7 +715,7 @@
         <a href="/" class="logo">
             <span class="logo-icon">🦷</span>
             <div class="logo-text">
-                <h1>Ortodente</h1>
+                <h1>Conversor CATP</h1>
                 <span>Catálogo de Produtos Siscomex</span>
             </div>
         </a>
@@ -775,7 +775,7 @@
                 <!-- Valores padrão para colunas ausentes -->
                 <div class="form-group">
                     <label>🏢 CNPJ Raiz (8 dígitos) — <small style="font-weight:400;color:var(--text-light)">preencha se não houver coluna na planilha</small></label>
-                    <input type="text" id="cnpj-padrao" placeholder="Ex: 25940099" maxlength="14"
+                    <input type="text" id="cnpj-padrao" placeholder="Ex: 12345678" maxlength="14"
                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
                     <p class="hint">Somente os 8 primeiros dígitos do CNPJ (raiz). Usado quando a planilha não tem coluna cpfCnpjRaiz.</p>
@@ -807,31 +807,45 @@
                     <label>Modo de conversão</label>
                     <div class="modo-options">
                         <div class="modo-option">
-                            <input type="radio" name="modo" id="modo-completo" value="completo" checked>
-                            <label for="modo-completo">
-                                <span class="modo-title">📦 Completo</span>
-                                <span class="modo-desc">Com seq/codigo/versao (padrão portal)</span>
+                            <input type="radio" name="modo" id="modo-api-post" value="api_post" checked>
+                            <label for="modo-api-post">
+                                <span class="modo-title">📡 API POST</span>
+                                <span class="modo-desc">Incluir produto (novo endpoint)</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-api-put" value="api_put">
+                            <label for="modo-api-put">
+                                <span class="modo-title">📡 API PUT</span>
+                                <span class="modo-desc">Nova versão / retificação</span>
                             </label>
                         </div>
                         <div class="modo-option">
                             <input type="radio" name="modo" id="modo-post" value="post">
                             <label for="modo-post">
-                                <span class="modo-title">🆕 POST (Criar)</span>
-                                <span class="modo-desc">Sem seq/codigo (inclusão API)</span>
+                                <span class="modo-title">📊 Lote POST</span>
+                                <span class="modo-desc">Upload lote no portal (com seq)</span>
                             </label>
                         </div>
                         <div class="modo-option">
                             <input type="radio" name="modo" id="modo-put" value="put">
                             <label for="modo-put">
-                                <span class="modo-title">✏️ PUT (Atualizar)</span>
-                                <span class="modo-desc">Com codigo (atualização API)</span>
+                                <span class="modo-title">📊 Lote PUT</span>
+                                <span class="modo-desc">Atualização lote no portal</span>
+                            </label>
+                        </div>
+                        <div class="modo-option">
+                            <input type="radio" name="modo" id="modo-completo" value="completo">
+                            <label for="modo-completo">
+                                <span class="modo-title">📦 Completo</span>
+                                <span class="modo-desc">Formato exportação do portal</span>
                             </label>
                         </div>
                     </div>
                     <p class="hint">
-                        <strong>Completo:</strong> Com seq/codigo/versao, igual ao portal (recomendado) &nbsp;|&nbsp;
-                        <strong>POST:</strong> Sem seq/codigo/versao (inclusão via API) &nbsp;|&nbsp;
-                        <strong>PUT:</strong> Com codigo (atualização via API)
+                        <strong>API POST/PUT:</strong> ProdutoIntegracaoRequestDTO (novos endpoints, cpfCnpjRaiz na URL) &nbsp;|&nbsp;
+                        <strong>Lote:</strong> ProdutoIntegracaoDTO com seq (upload portal, depreciado) &nbsp;|&nbsp;
+                        <strong>Completo:</strong> Formato idêntico ao exportado pelo portal
                     </p>
                 </div>
 
@@ -1096,7 +1110,7 @@
                 <div class="guide-step">
                     <div class="step-num">3</div>
                     <h4>Escolha o Modo</h4>
-                    <p><strong>POST</strong> para novos produtos, <strong>PUT</strong> para atualizar (requer código), <strong>Completo</strong> para formato do portal</p>
+                    <p><strong>API POST/PUT</strong> para novos endpoints (ProdutoIntegracaoRequestDTO), <strong>Lote POST/PUT</strong> para upload no portal (depreciado), <strong>Completo</strong> para formato de exportação</p>
                 </div>
                 <div class="guide-step">
                     <div class="step-num">4</div>
@@ -1106,7 +1120,7 @@
                 <div class="guide-step">
                     <div class="step-num">5</div>
                     <h4>Use na API</h4>
-                    <p>Envie o JSON para <code>POST /catp/api/ext/produto</code> ou <code>PUT /catp/api/ext/produto/{cnpj}/{codigo}</code></p>
+                    <p>Envie o JSON para <code>POST /catp/api/ext/produto/{cpfCnpjRaiz}</code> ou <code>PUT /catp/api/ext/produto/{cnpj}/{codigo}</code></p>
                 </div>
                 <div class="guide-step">
                     <div class="step-num">6</div>
@@ -1137,7 +1151,7 @@
                         <tr>
                             <td><span class="att-code">denominacao</span></td>
                             <td>Nome do produto</td>
-                            <td>Máximo 200 caracteres</td>
+                            <td>Máximo <strong>120</strong> caracteres</td>
                         </tr>
                         <tr>
                             <td><span class="att-code">descricao</span></td>
@@ -1185,22 +1199,32 @@
                         <tr>
                             <td>Criar produto</td>
                             <td><span class="att-code">POST</span></td>
-                            <td><code>/catp/api/ext/produto</code></td>
+                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}</code></td>
                         </tr>
                         <tr>
-                            <td>Atualizar produto</td>
+                            <td>Nova versão</td>
                             <td><span class="att-code">PUT</span></td>
                             <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}</code></td>
                         </tr>
                         <tr>
+                            <td>Retificar versão</td>
+                            <td><span class="att-code">PUT</span></td>
+                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}/{versao}</code></td>
+                        </tr>
+                        <tr>
                             <td>Consultar produto</td>
                             <td><span class="att-code">GET</span></td>
-                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}</code></td>
+                            <td><code>/catp/api/ext/produto/{cpfCnpjRaiz}/{codigo}/{versao}</code></td>
                         </tr>
                         <tr>
                             <td>Listar produtos</td>
                             <td><span class="att-code">GET</span></td>
-                            <td><code>/catp/api/ext/produto?cpfCnpjRaiz={cnpj}</code></td>
+                            <td><code>/catp/api/ext/produto/lista?cpfCnpjRaiz={cnpj}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Lote (depreciado)</td>
+                            <td><span class="att-code">POST</span></td>
+                            <td><code>/catp/api/ext/produto</code> <small>(removido após 01/01/2026)</small></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1216,7 +1240,7 @@
 
 <!-- Footer -->
 <footer class="footer">
-    <p>🦷 Ortodente — Conversor Catálogo de Produtos Siscomex (CATP API) &nbsp;|&nbsp; 
+    <p>📦 Conversor Catálogo de Produtos Siscomex (CATP API) &nbsp;|&nbsp; 
     <a href="https://docs.portalunico.siscomex.gov.br/api/catp/" target="_blank">Documentação Oficial</a></p>
 </footer>
 
