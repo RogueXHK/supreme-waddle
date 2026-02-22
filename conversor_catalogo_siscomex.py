@@ -50,7 +50,7 @@ except ImportError:
 MODALIDADES_VALIDAS = ["IMPORTACAO", "EXPORTACAO"]
 
 # Situações válidas (API aceita maiúsculas)
-SITUACOES_VALIDAS = ["ATIVADO", "DESATIVADO"]
+SITUACOES_VALIDAS = ["ATIVADO", "DESATIVADO", "RASCUNHO"]
 # Mapeamento para normalizar valores de situação
 SITUACAO_NORMALIZAR = {
     "ativado": "ATIVADO",
@@ -81,10 +81,10 @@ CAMPOS_OBRIGATORIOS_PUT = ["codigo", "descricao", "denominacao", "ncm", "cpfCnpj
 # Colunas principais da planilha (ordem fixa)
 COLUNAS_PRINCIPAIS = [
     "codigo",           # Código do produto (int, gerado pelo servidor no POST, obrigatório no PUT)
-    "denominacao",      # Nome do produto (obrigatório, max 200)
+    "denominacao",      # Nome do produto (obrigatório, max 120)
     "descricao",        # Descrição detalhada (obrigatório, max 2000)
     "cpfCnpjRaiz",      # CNPJ raiz 8 dígitos (obrigatório)
-    "situacao",          # Ativado/Desativado (opcional, padrão Ativado)
+    "situacao",          # ATIVADO/DESATIVADO (opcional, padrão ATIVADO)
     "modalidade",        # IMPORTACAO/EXPORTACAO (obrigatório)
     "ncm",               # Código NCM 8 dígitos (obrigatório)
     "codigosInterno",    # Códigos internos separados por ; (opcional)
@@ -199,7 +199,7 @@ class ConversorCatalogoSiscomex:
         Args:
             caminho_excel: Caminho do arquivo .xlsx
             defaults: Dict com valores padrão para campos ausentes na planilha
-                      Ex: {'cpfCnpjRaiz': '25940099', 'modalidade': 'IMPORTACAO'}
+                      Ex: {'cpfCnpjRaiz': '12345678', 'modalidade': 'IMPORTACAO'}
         """
         defaults = defaults or {}
         if not os.path.exists(caminho_excel):
@@ -435,13 +435,17 @@ class ConversorCatalogoSiscomex:
 
             elif campo == "situacao":
                 if valor == "":
-                    valor = "Ativado"  # Padrão
-                # Normalizar
+                    valor = "ATIVADO"  # Padrão (maiúscula conforme API)
+                # Normalizar para MAIÚSCULAS conforme Swagger
                 valor_lower = valor.lower()
                 if valor_lower in ["ativo", "ativado", "sim", "s", "1", "true", "yes"]:
-                    valor = "Ativado"
+                    valor = "ATIVADO"
                 elif valor_lower in ["inativo", "desativado", "não", "nao", "n", "0", "false", "no"]:
-                    valor = "Desativado"
+                    valor = "DESATIVADO"
+                elif valor_lower == "rascunho":
+                    valor = "RASCUNHO"
+                else:
+                    valor = valor.upper()  # Qualquer outro valor, forçar uppercase
 
             elif campo == "codigo":
                 if valor and valor != "":
@@ -606,17 +610,17 @@ class ConversorCatalogoSiscomex:
         Usa o schema ProdutoIntegracaoDTO que requer 'seq'.
         Remove campos read-only: versao, codigo.
         NÃO inclui versao nem codigo para que o portal crie novos produtos.
+        Ordem dos campos segue o padrão do portal.
         """
         resultado = []
         for seq, produto in enumerate(produtos, 1):
             item = {}
-            # seq é OBRIGATÓRIO no ProdutoIntegracaoDTO (upload de lote)
+            # Ordem: seq, descricao, denominacao, cpfCnpjRaiz, situacao,
+            #         modalidade, ncm, atributos..., codigosInterno
             item["seq"] = seq
-            # Campos obrigatórios
             item["descricao"] = produto.get("descricao", "")
             item["denominacao"] = produto.get("denominacao", "")
             item["cpfCnpjRaiz"] = produto.get("cpfCnpjRaiz", "")
-            # Situação deve ser MAIÚSCULA conforme API (ATIVADO, DESATIVADO)
             situacao = produto.get("situacao", "ATIVADO")
             item["situacao"] = self.normalizar_situacao(situacao)
             item["modalidade"] = produto.get("modalidade", "")
@@ -864,7 +868,7 @@ class ConversorCatalogoSiscomex:
             "denominacao": "Nome do produto\n(OBRIGATÓRIO)\nMáx 120 caracteres",
             "descricao": "Descrição detalhada\n(OBRIGATÓRIO)\nMáx 2000 caracteres",
             "cpfCnpjRaiz": "Seu CNPJ raiz 8 dígitos\n(OBRIGATÓRIO)\nSó números",
-            "situacao": "Ativado ou Desativado\n(padrão: Ativado)",
+            "situacao": "ATIVADO ou DESATIVADO\n(padrão: ATIVADO)",
             "modalidade": "IMPORTACAO ou\nEXPORTACAO\n(OBRIGATÓRIO)",
             "ncm": "Código NCM 8 dígitos\n(OBRIGATÓRIO)\nSó números",
             "codigosInterno": "Códigos internos\nseparados por ;\n(opcional)",
@@ -893,7 +897,7 @@ class ConversorCatalogoSiscomex:
             "denominacao": "ARCO NITI 12 (M) INF/SUP 10UN",
             "descricao": "Indicado Para Tratamentos Ortodônticos...",
             "cpfCnpjRaiz": "12345678",
-            "situacao": "Ativado",
+            "situacao": "ATIVADO",
             "modalidade": "IMPORTACAO",
             "ncm": "90211010",
             "codigosInterno": "6128",
@@ -967,7 +971,7 @@ class ConversorCatalogoSiscomex:
             [""],
             ["CAMPOS OPCIONAIS:"],
             ["  • codigo: Deixar VAZIO para novos produtos. Preencher para ATUALIZAR produto existente"],
-            ["  • situacao: 'Ativado' (padrão) ou 'Desativado'"],
+            ["  • situacao: 'ATIVADO' (padrão) ou 'DESATIVADO'"],
             ["  • codigosInterno: Códigos internos da empresa, separados por ponto-e-vírgula (;)"],
             [""],
             ["ATRIBUTOS (colunas ATT_xxxxx):"],

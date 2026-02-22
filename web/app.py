@@ -28,11 +28,11 @@ except ImportError:
     from conversor_catalogo_siscomex import ConversorCatalogoSiscomex, ATRIBUTOS_LABELS
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'ortodente-siscomex-catp-2026-secret')
+app.secret_key = os.environ.get('SECRET_KEY', 'conversor-siscomex-catp-2026-secret')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 
 # Diretório temporário para uploads/downloads
-UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), 'ortodente_uploads')
+UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), 'siscomex_catp_uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 EXTENSOES_PERMITIDAS_EXCEL = {'.xlsx', '.xls'}
