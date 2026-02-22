@@ -793,7 +793,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label>🌍 País de Origem (ATT_14545) — <small style="font-weight:400;color:var(--text-light)">obrigatório para importação</small></label>
+                    <label>� Código Operador Estrangeiro — <small style="font-weight:400;color:var(--text-light)">código numérico do fabricante/exportador</small></label>
+                    <input type="text" id="operador-estrangeiro" placeholder="Ex: 123456" maxlength="20"
+                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Código do operador estrangeiro (fabricante/exportador). Será inserido como <strong>codigoOperadorEstrangeiro</strong> em cada produto do JSON.</p>
+                </div>
+
+                <div class="form-group">
+                    <label>�🌍 País de Origem (ATT_14545) — <small style="font-weight:400;color:var(--text-light)">obrigatório para importação</small></label>
                     <select id="pais-origem-padrao"
                             style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
                         <option value="">-- Não preencher (já existe na planilha) --</option>
@@ -1439,6 +1447,10 @@
         if (perigosoPadrao) formData.append('perigoso_padrao', perigosoPadrao);
         if (fabricantePadrao) formData.append('fabricante_padrao', fabricantePadrao);
         if (embalagemPadrao) formData.append('embalagem_padrao', embalagemPadrao);
+
+        // Código Operador Estrangeiro
+        const operadorEstrangeiro = document.getElementById('operador-estrangeiro').value.trim();
+        if (operadorEstrangeiro) formData.append('operador_estrangeiro', operadorEstrangeiro);
 
         try {
             const res = await fetch('/converter', { method: 'POST', body: formData });

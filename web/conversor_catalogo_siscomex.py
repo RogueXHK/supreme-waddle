@@ -637,6 +637,10 @@ class ConversorCatalogoSiscomex:
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
             item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
 
+            # Código operador estrangeiro
+            if produto.get('codigoOperadorEstrangeiro'):
+                item['codigoOperadorEstrangeiro'] = produto['codigoOperadorEstrangeiro']
+
             # Códigos internos
             item["codigosInterno"] = produto.get("codigosInterno", [])
 
@@ -679,6 +683,11 @@ class ConversorCatalogoSiscomex:
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
             item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+
+            # Código operador estrangeiro
+            if produto.get('codigoOperadorEstrangeiro'):
+                item['codigoOperadorEstrangeiro'] = produto['codigoOperadorEstrangeiro']
+
             item["codigosInterno"] = produto.get("codigosInterno", [])
 
             resultado.append(item)
@@ -704,6 +713,10 @@ class ConversorCatalogoSiscomex:
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
             item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+
+            # Código operador estrangeiro
+            if produto.get('codigoOperadorEstrangeiro'):
+                item['codigoOperadorEstrangeiro'] = produto['codigoOperadorEstrangeiro']
 
             # Códigos internos
             item["codigosInterno"] = produto.get("codigosInterno", [])
@@ -741,6 +754,11 @@ class ConversorCatalogoSiscomex:
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
             item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+
+            # Código operador estrangeiro
+            if produto.get('codigoOperadorEstrangeiro'):
+                item['codigoOperadorEstrangeiro'] = produto['codigoOperadorEstrangeiro']
+
             item["codigosInterno"] = produto.get("codigosInterno", [])
 
             resultado.append(item)
@@ -785,6 +803,11 @@ class ConversorCatalogoSiscomex:
             item["atributosMultivalorados"] = produto.get("atributosMultivalorados", [])
             item["atributosCompostos"] = produto.get("atributosCompostos", [])
             item["atributosCompostosMultivalorados"] = produto.get("atributosCompostosMultivalorados", [])
+
+            # Código operador estrangeiro
+            if produto.get('codigoOperadorEstrangeiro'):
+                item['codigoOperadorEstrangeiro'] = produto['codigoOperadorEstrangeiro']
+
             item["codigosInterno"] = produto.get("codigosInterno", [])
 
             resultado.append(item)

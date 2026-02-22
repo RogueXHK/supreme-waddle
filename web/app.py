@@ -241,6 +241,7 @@ def converter():
     perigoso_padrao = request.form.get('perigoso_padrao', '').strip()
     fabricante_padrao = request.form.get('fabricante_padrao', '').strip()
     embalagem_padrao = request.form.get('embalagem_padrao', '').strip()
+    operador_estrangeiro = request.form.get('operador_estrangeiro', '').strip()
 
     try:
         # Salvar arquivo temporário
@@ -310,6 +311,10 @@ def converter():
 
             produto['atributos'] = atributos
             produto['atributosMultivalorados'] = multi
+
+            # codigoOperadorEstrangeiro
+            if operador_estrangeiro and not produto.get('codigoOperadorEstrangeiro'):
+                produto['codigoOperadorEstrangeiro'] = operador_estrangeiro
 
         if conversor.erros:
             # Limpar
