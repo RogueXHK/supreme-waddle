@@ -814,62 +814,14 @@
                     <p class="hint">Preenche ATT_14545 em todos os produtos que <strong>não</strong> tenham esse atributo na planilha. Obrigatório para produtos de importação.</p>
                 </div>
 
-                <div class="form-group">
-                    <label>📋 Validade do Produto (ATT_14546) — <small style="font-weight:400;color:var(--text-light)">obrigatório</small></label>
-                    <select id="validade-padrao"
-                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
-                        <option value="">-- Não preencher (já existe na planilha) --</option>
-                        <option value="INDETERMINADO" selected>INDETERMINADO</option>
-                        <option value="DETERMINADA">DETERMINADA</option>
-                    </select>
-                    <p class="hint">Preenche ATT_14546 nos produtos sem esse atributo na planilha.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>🔒 Produto Controlado (ATT_14547) — <small style="font-weight:400;color:var(--text-light)">obrigatório</small></label>
-                    <select id="controlado-padrao"
-                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
-                        <option value="">-- Não preencher (já existe na planilha) --</option>
-                        <option value="false" selected>Não (false)</option>
-                        <option value="true">Sim (true)</option>
-                    </select>
-                    <p class="hint">Preenche ATT_14547 nos produtos sem esse atributo na planilha.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>⚠️ Produto Perigoso (ATT_14554) — <small style="font-weight:400;color:var(--text-light)">obrigatório</small></label>
-                    <select id="perigoso-padrao"
-                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
-                        <option value="">-- Não preencher (já existe na planilha) --</option>
-                        <option value="false" selected>Não (false)</option>
-                        <option value="true">Sim (true)</option>
-                    </select>
-                    <p class="hint">Preenche ATT_14554 nos produtos sem esse atributo na planilha.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>🏭 Fabricante / Exportador (ATT_14555) — <small style="font-weight:400;color:var(--text-light)">obrigatório</small></label>
-                    <input type="text" id="fabricante-padrao" placeholder="Ex: HANGZHOU XINGCHEN 3B DENTAL..." maxlength="3000"
-                           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
-                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
-                    <p class="hint">Nome e endereço do fabricante/exportador. Preenche ATT_14555 nos produtos sem esse atributo.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>📦 Tipo de Embalagem (ATT_14556) — <small style="font-weight:400;color:var(--text-light)">obrigatório, multivalorado</small></label>
-                    <select id="embalagem-padrao"
-                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
-                        <option value="">-- Não preencher (já existe na planilha) --</option>
-                        <option value="11" selected>11 — Caixas de papelão</option>
-                        <option value="23">23 — Embalagem a vácuo</option>
-                        <option value="41">41 — Sacos plásticos</option>
-                        <option value="49">49 — Outras embalagens</option>
-                        <option value="Se3">Outro (digitar código)</option>
-                    </select>
-                    <input type="text" id="embalagem-custom" placeholder="Código da embalagem (ex: 11)" maxlength="10"
-                           style="display:none;width:100%;margin-top:8px;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
-                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
-                    <p class="hint">Preenche ATT_14556 (multivalorado) nos produtos sem esse atributo.</p>
+                <!-- Info: validação inteligente -->
+                <div class="form-group" style="background: #e8f5e9; border-left: 4px solid #27ae60; padding: 16px; border-radius: 8px;">
+                    <label style="color: #27ae60; margin-bottom: 4px;">🧠 Validação Inteligente de Atributos</label>
+                    <p class="hint" style="color: #2d3748;">
+                        O sistema usa a <strong>lista oficial de atributos por NCM</strong> do Siscomex (atualizada em 22/02/2026).
+                        Atributos que <strong>não são válidos</strong> para o NCM de cada produto são <strong>removidos automaticamente</strong>.
+                        Você será avisado sobre atributos removidos e obrigatórios faltantes nos resultados.
+                    </p>
                 </div>
 
                 <!-- Truncar automaticamente -->
@@ -1347,13 +1299,6 @@
         if (this.value === 'Se2') customInput.focus();
     });
 
-    // ===== EMBALAGEM SELECT =====
-    document.getElementById('embalagem-padrao').addEventListener('change', function() {
-        const customInput = document.getElementById('embalagem-custom');
-        customInput.style.display = this.value === 'Se3' ? 'block' : 'none';
-        if (this.value === 'Se3') customInput.focus();
-    });
-
     // ===== FILE UPLOAD =====
     function onFileSelected(input, areaId) {
         const area = document.getElementById(areaId);
@@ -1422,24 +1367,6 @@
             paisOrigem = paisSelect;
         }
         if (paisOrigem) formData.append('pais_origem_padrao', paisOrigem);
-
-        // Atributos obrigatórios adicionais
-        const validadePadrao = document.getElementById('validade-padrao').value;
-        const controladoPadrao = document.getElementById('controlado-padrao').value;
-        const perigosoPadrao = document.getElementById('perigoso-padrao').value;
-        const fabricantePadrao = document.getElementById('fabricante-padrao').value.trim();
-        const embalagemSelect = document.getElementById('embalagem-padrao').value;
-        let embalagemPadrao = '';
-        if (embalagemSelect === 'Se3') {
-            embalagemPadrao = document.getElementById('embalagem-custom').value.trim();
-        } else {
-            embalagemPadrao = embalagemSelect;
-        }
-        if (validadePadrao) formData.append('validade_padrao', validadePadrao);
-        if (controladoPadrao) formData.append('controlado_padrao', controladoPadrao);
-        if (perigosoPadrao) formData.append('perigoso_padrao', perigosoPadrao);
-        if (fabricantePadrao) formData.append('fabricante_padrao', fabricantePadrao);
-        if (embalagemPadrao) formData.append('embalagem_padrao', embalagemPadrao);
 
         try {
             const res = await fetch('/converter', { method: 'POST', body: formData });

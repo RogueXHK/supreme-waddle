@@ -38,6 +38,120 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 EXTENSOES_PERMITIDAS_EXCEL = {'.xlsx', '.xls'}
 EXTENSOES_PERMITIDAS_JSON = {'.json'}
 
+# ============================================================================
+# CARREGAR ATRIBUTOS VÁLIDOS POR NCM (arquivo oficial do Siscomex)
+# ============================================================================
+ATRIBUTOS_POR_NCM = {}  # { "90211010": { "ATT_14545": {...}, ... } }
+
+def carregar_atributos_ncm():
+    """Carrega o JSON oficial de atributos por NCM do Siscomex."""
+    global ATRIBUTOS_POR_NCM
+    # Tenta encontrar o arquivo em vários caminhos possíveis
+    caminhos = [
+        os.path.join(os.path.dirname(__file__), 'ATRIBUTOS_POR_NCM.json'),
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ATRIBUTOS_POR_NCM_2026_02_22.json'),
+    ]
+    for caminho in caminhos:
+        if os.path.exists(caminho):
+            try:
+                with open(caminho, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                for ncm_entry in data.get('listaNcm', []):
+                    ncm_code = ncm_entry['codigoNcm'].replace('.', '')
+                    attrs = {}
+                    for att in ncm_entry.get('listaAtributos', []):
+                        attrs[att['codigo']] = {
+                            'obrigatorio': att.get('obrigatorio', False),
+                            'multivalorado': att.get('multivalorado', False),
+                            'modalidade': att.get('modalidade', ''),
+                        }
+                    ATRIBUTOS_POR_NCM[ncm_code] = attrs
+                print(f"[CATP] Carregados atributos para {len(ATRIBUTOS_POR_NCM)} NCMs de {caminho}")
+                return
+            except Exception as e:
+                print(f"[CATP] Erro ao carregar atributos: {e}")
+    print("[CATP] AVISO: Arquivo de atributos por NCM não encontrado. Validação de atributos desabilitada.")
+
+# Carregar ao iniciar
+carregar_atributos_ncm()
+
+
+def filtrar_atributos_por_ncm(produtos, avisos_extra=None):
+    """
+    Filtra atributos de cada produto para manter APENAS os válidos para o NCM.
+    Remove atributos que não existem na lista oficial e avisa.
+    Também injeta obrigatórios faltantes quando possível.
+    """
+    if not ATRIBUTOS_POR_NCM:
+        return  # Sem dados, não filtra
+    
+    if avisos_extra is None:
+        avisos_extra = []
+    
+    for i, produto in enumerate(produtos):
+        ncm = produto.get('ncm', '').strip()
+        if not ncm or ncm not in ATRIBUTOS_POR_NCM:
+            continue
+        
+        validos = ATRIBUTOS_POR_NCM[ncm]
+        nome = produto.get('denominacao', f'Produto {i+1}')[:50]
+        
+        # Filtrar atributos simples
+        atributos_orig = produto.get('atributos', [])
+        atributos_filtrados = []
+        removidos = []
+        for att in atributos_orig:
+            cod = att.get('atributo', '')
+            if cod in validos:
+                atributos_filtrados.append(att)
+            else:
+                removidos.append(cod)
+        
+        if removidos:
+            avisos_extra.append(
+                f"Produto '{nome}': Removidos atributos não válidos para NCM {ncm}: {', '.join(removidos)}"
+            )
+        produto['atributos'] = atributos_filtrados
+        
+        # Filtrar atributos multivalorados
+        multi_orig = produto.get('atributosMultivalorados', [])
+        multi_filtrados = []
+        removidos_multi = []
+        for att in multi_orig:
+            cod = att.get('atributo', '')
+            if cod in validos and validos[cod].get('multivalorado'):
+                multi_filtrados.append(att)
+            elif cod in validos and not validos[cod].get('multivalorado'):
+                # Atributo existe mas não é multivalorado - converter para simples
+                valores = att.get('valores', [])
+                if valores:
+                    atributos_filtrados.append({
+                        'atributo': cod,
+                        'valor': valores[0]
+                    })
+                    avisos_extra.append(
+                        f"Produto '{nome}': {cod} convertido de multivalorado para simples"
+                    )
+            else:
+                removidos_multi.append(cod)
+        
+        if removidos_multi:
+            avisos_extra.append(
+                f"Produto '{nome}': Removidos atributos multi não válidos para NCM {ncm}: {', '.join(removidos_multi)}"
+            )
+        produto['atributosMultivalorados'] = multi_filtrados
+        produto['atributos'] = atributos_filtrados
+        
+        # Verificar obrigatórios faltantes
+        existentes = {a.get('atributo') for a in produto['atributos']}
+        existentes_multi = {a.get('atributo') for a in produto['atributosMultivalorados']}
+        
+        for cod, info in validos.items():
+            if info['obrigatorio'] and cod not in existentes and cod not in existentes_multi:
+                avisos_extra.append(
+                    f"Produto '{nome}': FALTA atributo obrigatório {cod} para NCM {ncm}!"
+                )
+
 
 def extensao_permitida(filename, permitidas):
     return os.path.splitext(filename)[1].lower() in permitidas
@@ -122,11 +236,6 @@ def converter():
     cnpj_padrao = request.form.get('cnpj_padrao', '').strip()
     modalidade_padrao = request.form.get('modalidade_padrao', '').strip()
     pais_origem_padrao = request.form.get('pais_origem_padrao', '').strip()
-    validade_padrao = request.form.get('validade_padrao', '').strip()
-    controlado_padrao = request.form.get('controlado_padrao', '').strip()
-    perigoso_padrao = request.form.get('perigoso_padrao', '').strip()
-    fabricante_padrao = request.form.get('fabricante_padrao', '').strip()
-    embalagem_padrao = request.form.get('embalagem_padrao', '').strip()
 
     try:
         # Salvar arquivo temporário
@@ -175,40 +284,12 @@ def converter():
                     })
                     produto['atributos'] = atributos
 
-        # Injetar atributos obrigatórios que faltam
-        atributos_simples_padrao = {}
-        if validade_padrao:
-            atributos_simples_padrao['ATT_14546'] = validade_padrao
-        if controlado_padrao:
-            atributos_simples_padrao['ATT_14547'] = controlado_padrao
-        if perigoso_padrao:
-            atributos_simples_padrao['ATT_14554'] = perigoso_padrao
-        if fabricante_padrao:
-            atributos_simples_padrao['ATT_14555'] = fabricante_padrao
-
-        if atributos_simples_padrao:
-            for produto in produtos:
-                atributos = produto.get('atributos', [])
-                existentes = {a.get('atributo') for a in atributos}
-                for att_code, att_valor in atributos_simples_padrao.items():
-                    if att_code not in existentes:
-                        atributos.append({
-                            'atributo': att_code,
-                            'valor': att_valor
-                        })
-                produto['atributos'] = atributos
-
-        # Injetar ATT_14556 (Tipo de Embalagem - multivalorado) nos produtos que não têm
-        if embalagem_padrao:
-            for produto in produtos:
-                atributos_multi = produto.get('atributosMultivalorados', [])
-                tem_14556 = any(a.get('atributo') == 'ATT_14556' for a in atributos_multi)
-                if not tem_14556:
-                    atributos_multi.append({
-                        'atributo': 'ATT_14556',
-                        'valores': [embalagem_padrao]
-                    })
-                    produto['atributosMultivalorados'] = atributos_multi
+        # Filtrar atributos por NCM usando a lista oficial do Siscomex
+        # Remove atributos que NÃO são válidos para o NCM de cada produto
+        avisos_atributos = []
+        filtrar_atributos_por_ncm(produtos, avisos_atributos)
+        if avisos_atributos:
+            conversor.avisos.extend(avisos_atributos)
 
         if conversor.erros:
             # Limpar
