@@ -631,6 +631,7 @@ def vincular_operador():
                 continue
 
             vinculo = {
+                'seq': len(vinculos) + 1,
                 'codigo': codigo_int,
                 'codigoOperadorEstrangeiro': operador
             }
