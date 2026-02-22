@@ -122,6 +122,11 @@ def converter():
     cnpj_padrao = request.form.get('cnpj_padrao', '').strip()
     modalidade_padrao = request.form.get('modalidade_padrao', '').strip()
     pais_origem_padrao = request.form.get('pais_origem_padrao', '').strip()
+    validade_padrao = request.form.get('validade_padrao', '').strip()
+    controlado_padrao = request.form.get('controlado_padrao', '').strip()
+    perigoso_padrao = request.form.get('perigoso_padrao', '').strip()
+    fabricante_padrao = request.form.get('fabricante_padrao', '').strip()
+    embalagem_padrao = request.form.get('embalagem_padrao', '').strip()
 
     try:
         # Salvar arquivo temporário
@@ -169,6 +174,41 @@ def converter():
                         'valor': pais_origem_padrao
                     })
                     produto['atributos'] = atributos
+
+        # Injetar atributos obrigatórios que faltam
+        atributos_simples_padrao = {}
+        if validade_padrao:
+            atributos_simples_padrao['ATT_14546'] = validade_padrao
+        if controlado_padrao:
+            atributos_simples_padrao['ATT_14547'] = controlado_padrao
+        if perigoso_padrao:
+            atributos_simples_padrao['ATT_14554'] = perigoso_padrao
+        if fabricante_padrao:
+            atributos_simples_padrao['ATT_14555'] = fabricante_padrao
+
+        if atributos_simples_padrao:
+            for produto in produtos:
+                atributos = produto.get('atributos', [])
+                existentes = {a.get('atributo') for a in atributos}
+                for att_code, att_valor in atributos_simples_padrao.items():
+                    if att_code not in existentes:
+                        atributos.append({
+                            'atributo': att_code,
+                            'valor': att_valor
+                        })
+                produto['atributos'] = atributos
+
+        # Injetar ATT_14556 (Tipo de Embalagem - multivalorado) nos produtos que não têm
+        if embalagem_padrao:
+            for produto in produtos:
+                atributos_multi = produto.get('atributosMultivalorados', [])
+                tem_14556 = any(a.get('atributo') == 'ATT_14556' for a in atributos_multi)
+                if not tem_14556:
+                    atributos_multi.append({
+                        'atributo': 'ATT_14556',
+                        'valores': [embalagem_padrao]
+                    })
+                    produto['atributosMultivalorados'] = atributos_multi
 
         if conversor.erros:
             # Limpar
