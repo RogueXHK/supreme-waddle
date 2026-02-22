@@ -236,6 +236,11 @@ def converter():
     cnpj_padrao = request.form.get('cnpj_padrao', '').strip()
     modalidade_padrao = request.form.get('modalidade_padrao', '').strip()
     pais_origem_padrao = request.form.get('pais_origem_padrao', '').strip()
+    validade_padrao = request.form.get('validade_padrao', '').strip()
+    controlado_padrao = request.form.get('controlado_padrao', '').strip()
+    perigoso_padrao = request.form.get('perigoso_padrao', '').strip()
+    fabricante_padrao = request.form.get('fabricante_padrao', '').strip()
+    embalagem_padrao = request.form.get('embalagem_padrao', '').strip()
 
     try:
         # Salvar arquivo temporário
@@ -272,24 +277,39 @@ def converter():
         conversor = ConversorCatalogoSiscomex(auto_truncar=auto_truncar)
         produtos = conversor.ler_planilha(caminho_excel, defaults=defaults)
 
-        # Injetar ATT_14545 (País de Origem) nos produtos que não têm
-        if pais_origem_padrao:
-            for produto in produtos:
-                atributos = produto.get('atributos', [])
-                tem_14545 = any(a.get('atributo') == 'ATT_14545' for a in atributos)
-                if not tem_14545:
-                    atributos.insert(0, {
-                        'atributo': 'ATT_14545',
-                        'valor': pais_origem_padrao
-                    })
-                    produto['atributos'] = atributos
+        # Injetar atributos obrigatórios nos produtos que não os possuem
+        for produto in produtos:
+            atributos = produto.get('atributos', [])
+            multi = produto.get('atributosMultivalorados', [])
+            codigos_simples = {a.get('atributo') for a in atributos}
+            codigos_multi = {a.get('atributo') for a in multi}
 
-        # Filtrar atributos por NCM usando a lista oficial do Siscomex
-        # Remove atributos que NÃO são válidos para o NCM de cada produto
-        avisos_atributos = []
-        filtrar_atributos_por_ncm(produtos, avisos_atributos)
-        if avisos_atributos:
-            conversor.avisos.extend(avisos_atributos)
+            # ATT_14545 — País de Origem (simples)
+            if pais_origem_padrao and 'ATT_14545' not in codigos_simples:
+                atributos.insert(0, {'atributo': 'ATT_14545', 'valor': pais_origem_padrao})
+
+            # ATT_14546 — Validade (simples)
+            if validade_padrao and 'ATT_14546' not in codigos_simples:
+                atributos.append({'atributo': 'ATT_14546', 'valor': validade_padrao})
+
+            # ATT_14547 — Controlado (simples)
+            if controlado_padrao and 'ATT_14547' not in codigos_simples:
+                atributos.append({'atributo': 'ATT_14547', 'valor': controlado_padrao})
+
+            # ATT_14554 — Perigoso (simples)
+            if perigoso_padrao and 'ATT_14554' not in codigos_simples:
+                atributos.append({'atributo': 'ATT_14554', 'valor': perigoso_padrao})
+
+            # ATT_14555 — Fabricante/Exportador (simples)
+            if fabricante_padrao and 'ATT_14555' not in codigos_simples:
+                atributos.append({'atributo': 'ATT_14555', 'valor': fabricante_padrao})
+
+            # ATT_14556 — Embalagem (MULTIVALORADO)
+            if embalagem_padrao and 'ATT_14556' not in codigos_multi:
+                multi.append({'atributo': 'ATT_14556', 'valores': [embalagem_padrao]})
+
+            produto['atributos'] = atributos
+            produto['atributosMultivalorados'] = multi
 
         if conversor.erros:
             # Limpar
