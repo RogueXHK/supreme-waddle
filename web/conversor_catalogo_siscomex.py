@@ -45,11 +45,17 @@ except ImportError:
 # Modalidades válidas
 MODALIDADES_VALIDAS = ["IMPORTACAO", "EXPORTACAO"]
 
-# Situações válidas
-SITUACOES_VALIDAS = ["Ativado", "Desativado"]
+# Situações válidas (API aceita maiúsculas)
+SITUACOES_VALIDAS = ["ATIVADO", "DESATIVADO"]
+# Mapeamento para normalizar valores de situação
+SITUACAO_NORMALIZAR = {
+    "ativado": "ATIVADO",
+    "desativado": "DESATIVADO",
+    "rascunho": "RASCUNHO",
+}
 
 # Tamanhos máximos de campos (conforme API)
-MAX_DENOMINACAO = 200
+MAX_DENOMINACAO = 120  # Swagger spec: Tamanho máximo: 120
 MAX_DESCRICAO = 2000
 MAX_NCM = 8
 MAX_CODIGO_INTERNO = 60
@@ -131,9 +137,16 @@ class ConversorCatalogoSiscomex:
             return False
         return True
 
+    def normalizar_situacao(self, situacao: str) -> str:
+        """Normaliza o valor de situação para maiúsculas conforme API."""
+        if not situacao:
+            return "ATIVADO"
+        return SITUACAO_NORMALIZAR.get(situacao.strip().lower(), situacao.upper())
+
     def validar_situacao(self, situacao: str, linha: int) -> bool:
         """Valida situação do produto."""
-        if situacao and situacao not in SITUACOES_VALIDAS:
+        situacao_norm = self.normalizar_situacao(situacao) if situacao else "ATIVADO"
+        if situacao_norm not in SITUACOES_VALIDAS:
             self.erros.append(
                 f"Linha {linha}: Situação '{situacao}' inválida. "
                 f"Valores aceitos: {', '.join(SITUACOES_VALIDAS)}"
@@ -582,17 +595,23 @@ class ConversorCatalogoSiscomex:
 
     def gerar_json_post(self, produtos: list) -> list:
         """
-        Gera JSON para POST (inclusão de novos produtos).
-        Remove campos read-only: seq, versao, codigo.
+        Gera JSON para POST (inclusão de novos produtos via upload no portal).
+        Usa o schema ProdutoIntegracaoDTO que requer 'seq'.
+        Remove campos read-only: versao, codigo.
+        NÃO inclui versao nem codigo para que o portal crie novos produtos.
         """
         resultado = []
-        for produto in produtos:
+        for seq, produto in enumerate(produtos, 1):
             item = {}
+            # seq é OBRIGATÓRIO no ProdutoIntegracaoDTO (upload de lote)
+            item["seq"] = seq
             # Campos obrigatórios
             item["descricao"] = produto.get("descricao", "")
             item["denominacao"] = produto.get("denominacao", "")
             item["cpfCnpjRaiz"] = produto.get("cpfCnpjRaiz", "")
-            item["situacao"] = produto.get("situacao", "Ativado")
+            # Situação deve ser MAIÚSCULA conforme API (ATIVADO, DESATIVADO)
+            situacao = produto.get("situacao", "ATIVADO")
+            item["situacao"] = self.normalizar_situacao(situacao)
             item["modalidade"] = produto.get("modalidade", "")
             item["ncm"] = produto.get("ncm", "")
 
@@ -611,11 +630,12 @@ class ConversorCatalogoSiscomex:
 
     def gerar_json_put(self, produtos: list) -> list:
         """
-        Gera JSON para PUT (atualização de produtos existentes).
-        Inclui 'codigo' no body. Remove seq e versao.
+        Gera JSON para PUT (atualização/nova versão de produtos existentes).
+        Inclui 'seq' e 'codigo' no body. Remove versao (nova versão é criada pelo servidor).
+        Usa ProdutoIntegracaoDTO para upload em lote pelo portal.
         """
         resultado = []
-        for produto in produtos:
+        for seq, produto in enumerate(produtos, 1):
             codigo = produto.get("codigo")
             if not codigo or str(codigo).strip() == "":
                 self.avisos.append(
@@ -629,11 +649,13 @@ class ConversorCatalogoSiscomex:
                 continue
 
             item = {}
+            item["seq"] = seq
             item["codigo"] = int(codigo) if isinstance(codigo, (int, float)) else codigo
             item["descricao"] = produto.get("descricao", "")
             item["denominacao"] = produto.get("denominacao", "")
             item["cpfCnpjRaiz"] = produto.get("cpfCnpjRaiz", "")
-            item["situacao"] = produto.get("situacao", "Ativado")
+            situacao = produto.get("situacao", "ATIVADO")
+            item["situacao"] = self.normalizar_situacao(situacao)
             item["modalidade"] = produto.get("modalidade", "")
             item["ncm"] = produto.get("ncm", "")
 
@@ -673,7 +695,8 @@ class ConversorCatalogoSiscomex:
             item["descricao"] = produto.get("descricao", "")
             item["denominacao"] = produto.get("denominacao", "")
             item["cpfCnpjRaiz"] = produto.get("cpfCnpjRaiz", "")
-            item["situacao"] = produto.get("situacao", "Ativado")
+            situacao = produto.get("situacao", "ATIVADO")
+            item["situacao"] = self.normalizar_situacao(situacao)
             item["modalidade"] = produto.get("modalidade", "")
             item["ncm"] = produto.get("ncm", "")
             # versao: só incluir se veio da planilha/JSON original (campo do servidor)
