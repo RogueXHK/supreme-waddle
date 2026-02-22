@@ -559,6 +559,11 @@ class ConversorCatalogoSiscomex:
                     except ValueError:
                         pass
 
+                # Zero-padding para atributos com código de domínio de 2 dígitos
+                # ATT_14540 (Estágio de Fabricação): "1" → "01"
+                if codigo_att == 'ATT_14540' and valor_str.isdigit() and len(valor_str) == 1:
+                    valor_str = valor_str.zfill(2)
+
                 atributos.append({
                     "atributo": codigo_att,
                     "valor": valor_str
