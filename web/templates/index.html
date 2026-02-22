@@ -792,6 +792,28 @@
                     <p class="hint">Aplicado a todos os produtos quando a planilha não tem coluna de modalidade.</p>
                 </div>
 
+                <div class="form-group">
+                    <label>🌍 País de Origem (ATT_14545) — <small style="font-weight:400;color:var(--text-light)">obrigatório para importação</small></label>
+                    <select id="pais-origem-padrao"
+                            style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:white;">
+                        <option value="">-- Não preencher (já existe na planilha) --</option>
+                        <option value="82">82 — China</option>
+                        <option value="249">249 — Estados Unidos</option>
+                        <option value="573">573 — Japão</option>
+                        <option value="160">160 — Alemanha</option>
+                        <option value="586">586 — Coreia do Sul</option>
+                        <option value="245">245 — Espanha</option>
+                        <option value="399">399 — Itália</option>
+                        <option value="158">158 — França</option>
+                        <option value="628">628 — Reino Unido</option>
+                        <option value="Se2">Outro (digitar código)</option>
+                    </select>
+                    <input type="text" id="pais-origem-custom" placeholder="Código do país (ex: 82)" maxlength="10"
+                           style="display:none;width:100%;margin-top:8px;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:var(--transition);"
+                           onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <p class="hint">Preenche ATT_14545 em todos os produtos que <strong>não</strong> tenham esse atributo na planilha. Obrigatório para produtos de importação.</p>
+                </div>
+
                 <!-- Truncar automaticamente -->
                 <div class="form-group">
                     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
@@ -1260,6 +1282,13 @@
         event.currentTarget.classList.add('active');
     }
 
+    // ===== PAÍS DE ORIGEM SELECT =====
+    document.getElementById('pais-origem-padrao').addEventListener('change', function() {
+        const customInput = document.getElementById('pais-origem-custom');
+        customInput.style.display = this.value === 'Se2' ? 'block' : 'none';
+        if (this.value === 'Se2') customInput.focus();
+    });
+
     // ===== FILE UPLOAD =====
     function onFileSelected(input, areaId) {
         const area = document.getElementById(areaId);
@@ -1318,6 +1347,16 @@
         if (cnpjPadrao) formData.append('cnpj_padrao', cnpjPadrao);
         if (modalidadePadrao) formData.append('modalidade_padrao', modalidadePadrao);
         formData.append('auto_truncar', autoTruncar.toString());
+
+        // País de Origem padrão
+        const paisSelect = document.getElementById('pais-origem-padrao').value;
+        let paisOrigem = '';
+        if (paisSelect === 'Se2') {
+            paisOrigem = document.getElementById('pais-origem-custom').value.trim();
+        } else {
+            paisOrigem = paisSelect;
+        }
+        if (paisOrigem) formData.append('pais_origem_padrao', paisOrigem);
 
         try {
             const res = await fetch('/converter', { method: 'POST', body: formData });

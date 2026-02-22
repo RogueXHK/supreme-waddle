@@ -121,6 +121,7 @@ def converter():
     # Valores padrão para colunas que podem não existir na planilha
     cnpj_padrao = request.form.get('cnpj_padrao', '').strip()
     modalidade_padrao = request.form.get('modalidade_padrao', '').strip()
+    pais_origem_padrao = request.form.get('pais_origem_padrao', '').strip()
 
     try:
         # Salvar arquivo temporário
@@ -156,6 +157,18 @@ def converter():
         # Converter
         conversor = ConversorCatalogoSiscomex(auto_truncar=auto_truncar)
         produtos = conversor.ler_planilha(caminho_excel, defaults=defaults)
+
+        # Injetar ATT_14545 (País de Origem) nos produtos que não têm
+        if pais_origem_padrao:
+            for produto in produtos:
+                atributos = produto.get('atributos', [])
+                tem_14545 = any(a.get('atributo') == 'ATT_14545' for a in atributos)
+                if not tem_14545:
+                    atributos.insert(0, {
+                        'atributo': 'ATT_14545',
+                        'valor': pais_origem_padrao
+                    })
+                    produto['atributos'] = atributos
 
         if conversor.erros:
             # Limpar
